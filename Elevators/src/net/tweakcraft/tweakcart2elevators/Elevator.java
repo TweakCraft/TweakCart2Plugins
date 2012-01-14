@@ -27,7 +27,7 @@ public class Elevator extends AbstractSignPlugin {
     @Override
     public void onEnable() {
         plugin.log("Elevators enabled");
-        TweakPluginManager.getInstance().registerEvent(this, TweakCartEvent.Sign.VehicleCollidesWithSignEvent, "elevator");
+        plugin.getPluginManager().registerEvent(this, TweakCartEvent.Sign.VehicleCollidesWithSignEvent, "elevator");
         parser = new ElevatorParser();
     }
 
@@ -38,11 +38,12 @@ public class Elevator extends AbstractSignPlugin {
     
     @Override
     public void onSignCollision(TweakVehicleCollidesWithSignEvent event) {
+        System.out.println("Getting event!");
         Minecart mine = event.getMinecart();
         Sign sign = event.getSign();
         Direction heading = event.getDirection();
         ElevateDirection ev = parser.parseSign(sign);
-        
+        System.out.println(ev);
         Location newLocation = null;
         switch(ev){
         case UP:
@@ -54,7 +55,7 @@ public class Elevator extends AbstractSignPlugin {
         }
         if(newLocation != null){
             //Een beetje verplaatsen wegens direction, anders komt de cart in de sign te staan, nu blijft de cart dezelfde kant op rijden
-            VehicleUtil.moveCart(mine, newLocation.add((double)heading.getModX(),(double)heading.getModY(),(double)heading.getModZ()));
+            VehicleUtil.moveCart(mine, newLocation.add((double)heading.getModX()*2,(double)heading.getModY()*2,(double)heading.getModZ()*2));
         }
     }
 
@@ -66,7 +67,7 @@ public class Elevator extends AbstractSignPlugin {
         
         for(int i = 0; i < maxIt; i++){
             signBlock = signBlock.getRelative(direction);
-            if(signBlock instanceof Sign){
+            if(signBlock.getState() instanceof Sign){
                 return signBlock.getLocation();
             }
         }
