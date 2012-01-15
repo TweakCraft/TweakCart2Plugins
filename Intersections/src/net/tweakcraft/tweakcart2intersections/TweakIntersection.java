@@ -60,27 +60,20 @@ public class TweakIntersection {
                     IntersectionCharacter ic = IntersectionCharacter.getIntersectionCharacter(mango.substring(i, i + 1));
                     switch (ic) {
                         case MINECART:
-                            //TODO: checks etc
                             if (!(cart instanceof StorageMinecart) && !(cart instanceof PoweredMinecart)) {
                                 cartFound = true;
-                                break;
-                            } else {
-                                break;
                             }
+                            break;
                         case STORAGE_CART:
                             if (cart instanceof StorageMinecart) {
                                 cartFound = true;
-                                break;
-                            } else {
-                                break;
                             }
+                            break;
                         case POWERED_CART:
                             if (cart instanceof PoweredMinecart) {
                                 cartFound = true;
-                                break;
-                            } else {
-                                break;
                             }
+                            break;
                         case EMPTY_CART:
                             //TODO: think of implementation;
                             break;
@@ -91,6 +84,9 @@ public class TweakIntersection {
                         default:
                             return null;
                     }
+                }
+                if(cartFound){
+                    return remainder;
                 }
             }
             //Remainder
