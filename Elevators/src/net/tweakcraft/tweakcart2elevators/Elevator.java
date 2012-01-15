@@ -38,7 +38,6 @@ public class Elevator extends AbstractSignPlugin {
     
     @Override
     public void onSignCollision(TweakVehicleCollidesWithSignEvent event) {
-        System.out.println("Getting event!");
         Minecart mine = event.getMinecart();
         Sign sign = event.getSign();
         Direction heading = event.getDirection();
@@ -47,27 +46,29 @@ public class Elevator extends AbstractSignPlugin {
         Location newLocation = null;
         switch(ev){
         case UP:
-            newLocation = findSign(true, sign);
+            newLocation = findSign(true, sign, heading);
             break;
         case DOWN:
-            newLocation = findSign(false, sign);
+            newLocation = findSign(false, sign, heading);
             break;
         }
         if(newLocation != null){
             //Een beetje verplaatsen wegens direction, anders komt de cart in de sign te staan, nu blijft de cart dezelfde kant op rijden
-            VehicleUtil.moveCart(mine, newLocation.add((double)heading.getModX()*2,(double)heading.getModY()*2,(double)heading.getModZ()*2));
+            VehicleUtil.moveCart(mine, newLocation.add((double)heading.getModX()*1.5,(double)heading.getModY()*1.5,(double)heading.getModZ()*1.5));
         }
     }
 
-    private Location findSign(boolean isUp, Sign s) {
+    private Location findSign(boolean isUp, Sign s, Direction heading) {
         Block signBlock = s.getBlock();
         int height = s.getY();
+        
         int maxIt = Math.min(isUp? 129 - height : height, MAX_HEIGHT); 
         BlockFace direction = isUp? BlockFace.UP : BlockFace.DOWN;
         
         for(int i = 0; i < maxIt; i++){
             signBlock = signBlock.getRelative(direction);
-            if(signBlock.getState() instanceof Sign){
+            if(signBlock.getState() instanceof Sign && VehicleUtil.canSpawn(signBlock.getRelative(heading.getModX(), heading.getModY(), heading.getModZ()))){
+                
                 return signBlock.getLocation();
             }
         }
