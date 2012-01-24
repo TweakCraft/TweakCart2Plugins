@@ -1,8 +1,10 @@
 package net.tweakcraft.tweakcart2cartstorage;
 
+import net.tweakcraft.tweakcart.TweakPluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class TweakCartCartStorage extends JavaPlugin {
+    TweakPluginManager corePluginManager = TweakPluginManager.getInstance();
 
     @Override
     public void onDisable() {
@@ -11,6 +13,6 @@ public class TweakCartCartStorage extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        //TODO: Get TweakCart, initialize CartStorage and register events...
+        //corePluginManager.registerEvent(...);
     }
 }
