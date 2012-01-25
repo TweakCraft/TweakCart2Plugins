@@ -16,21 +16,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-package net.tweakcraft.tweakcart2cartstorage;
+package net.tweakcraft.tweakcart2cartstorage.parser;
 
-import net.tweakcraft.tweakcart.TweakPluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
+import net.tweakcraft.tweakcart.model.Direction;
+import net.tweakcraft.tweakcart.model.IntMap;
 
-public class TweakCartCartStorage extends JavaPlugin {
-    TweakPluginManager corePluginManager = TweakPluginManager.getInstance();
-
-    @Override
-    public void onDisable() {
-        //Has to be implemented
-    }
-
-    @Override
-    public void onEnable() {
-        //corePluginManager.registerEvent(...);
+/**
+ * Created by IntelliJ IDEA.
+ *
+ * @author Edoxile
+ */
+public class ItemParser {
+    public static IntMap parseLine(String line, Direction d, IntMap map){
+        //TODO: implement
+        return map;
     }
 }
