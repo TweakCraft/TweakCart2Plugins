@@ -111,10 +111,12 @@ public class ItemParser {
                     break;
                 case ITEM:
                     //check for null;
-                    maps[toDo.ordinal()] = parseLine(action, d, maps[toDo.ordinal()]);
-                    if (maps[toDo.ordinal()] == null) {
-                        //Sytnax error on sign, break form loop because continuing won't have anny effect and would only cause NPE's
-                        return null;
+                    if (toDo != null) {
+                        maps[toDo.ordinal()] = parseLine(action, d, maps[toDo.ordinal()]);
+                        if (maps[toDo.ordinal()] == null) {
+                            //Sytnax error on sign, break form loop because continuing won't have anny effect and would only cause NPE's
+                            return null;
+                        }
                     }
                     break;
                 default:
