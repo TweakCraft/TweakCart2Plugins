@@ -30,7 +30,7 @@ import org.bukkit.block.Sign;
  * @author Edoxile
  */
 public class ItemParser {
-    public static IntMap parseLine(String line, Direction d, IntMap map, Action a) {
+    public static IntMap parseLine(String line, Direction d, IntMap map) {
         //TODO: Can't the ItemCharacters.getCharacter() function return type 'char'? AKA is it possible to split on char?
         //TODO: First chop of direction, then run through the rest of the parser
         boolean remove = line.charAt(0) == ItemCharacter.FLIP.getCharacter().charAt(0);
@@ -39,8 +39,7 @@ public class ItemParser {
         }
         String[] apples = line.split(ItemCharacter.DELIMITER.getCharacter());
         for (String apple : apples) {
-            //TODO: why does my compiler whine at this statement?
-            int amount = (a.equals(Action.COLLECT)) ? Integer.MAX_VALUE : -Integer.MAX_VALUE;
+            int amount = Integer.MAX_VALUE;
             byte data = 0;
             int id = 0;
             //Dit wordt als een los deel gezien. Geen check op .lenght omdat 't niet uitmaakt of er 1 of 900 zijn.
@@ -49,7 +48,7 @@ public class ItemParser {
             if (mango.length == 2) {
                 //So there is an amount, nice!
                 amount = Integer.parseInt(mango[1]);
-                amount = (a.equals(Action.COLLECT)) ? amount : -amount;
+                //TODO: check if amount < 1 etc.
             } else if (mango.length > 2) {
                 return null;
             }
@@ -90,8 +89,11 @@ public class ItemParser {
         return map;
     }
 
-    public static IntMap parseSign(Sign s, /* TODO: is this needed? StorageMinecart c,*/ Direction d) {
-        IntMap map = new IntMap();
+    public static IntMap[] parseSign(Sign s, /* TODO: is this needed? StorageMinecart c,*/ Direction d) {
+        IntMap[] maps = new IntMap[2];
+        //TODO: better way to initialize this array?
+        maps[0] = new IntMap();
+        maps[1] = new IntMap();
         Action toDo = null;
         for (String action : s.getLines()) {
             action = StringUtil.stripBrackets(action.toLowerCase());
@@ -104,17 +106,23 @@ public class ItemParser {
                     break;
                 case ALL:
                     if (toDo != null) {
-                        map.fillAll(toDo.equals(Action.COLLECT));
+                        maps[toDo.ordinal()].fillAll();
                     }
                     break;
                 case ITEM:
-                    map = parseLine(action, d, map, toDo);
+                    //check for null;
+                    maps[toDo.ordinal()] = parseLine(action, d, maps[toDo.ordinal()]);
+                    if (maps[toDo.ordinal()] == null) {
+                        //Sytnax error on sign, break form loop because continuing won't have anny effect and would only cause NPE's
+                        return null;
+                    }
                     break;
                 default:
+                    //Either the syntax is fucked up or some kind of comment. Don't parse but do continue.
                     break;
             }
         }
-        return map;
+        return maps;
     }
 
     public static Action parseAction(String line) {
