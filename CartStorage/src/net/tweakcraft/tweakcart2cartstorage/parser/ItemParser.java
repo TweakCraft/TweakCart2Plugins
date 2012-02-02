@@ -30,6 +30,7 @@ import org.bukkit.block.Sign;
  * @author Edoxile
  */
 public class ItemParser {
+    
     public static IntMap parseLine(String line, Direction d, IntMap map) {
         //TODO: Can't the ItemCharacters.getCharacter() function return type 'char'? AKA is it possible to split on char?
         //TODO: First chop of direction, then run through the rest of the parser
@@ -42,8 +43,8 @@ public class ItemParser {
             int amount = Integer.MAX_VALUE;
             byte data = 0;
             int id = 0;
-            //Dit wordt als een los deel gezien. Geen check op .lenght omdat 't niet uitmaakt of er 1 of 900 zijn.
-            //Omdat er geen index gebruikt hoeft te worden kan hier gewoon een for-each loop gebruikt worden.
+            //This is seen as a separate part. No check on .length because it doesn't matter if there is
+            //just one part or OVER 9000. Because an index is not necessary here, a for-each loop can be used.
             String[] mango = apple.split(ItemCharacter.AMOUNT.getCharacter());
             if (mango.length == 2) {
                 //So there is an amount, nice!
@@ -52,6 +53,7 @@ public class ItemParser {
             } else if (mango.length > 2) {
                 return null;
             }
+            //TODO: check if this is possible. Otherwise we have to find a smart way to recycle our objects.
             mango = mango[0].split(ItemCharacter.RANGE.getCharacter());
             if (mango.length == 1) {
                 //So, now we only need to check for a data-value :D
@@ -90,10 +92,8 @@ public class ItemParser {
     }
 
     public static IntMap[] parseSign(Sign s, /* TODO: is this needed? StorageMinecart c,*/ Direction d) {
-        IntMap[] maps = new IntMap[2];
-        //TODO: better way to initialize this array?
-        maps[0] = new IntMap();
-        maps[1] = new IntMap();
+        //LOL, gotta love this kind of code :P
+        IntMap[] maps = new IntMap[]{new IntMap(), new IntMap()};
         Action toDo = null;
         for (String action : s.getLines()) {
             action = StringUtil.stripBrackets(action.toLowerCase());

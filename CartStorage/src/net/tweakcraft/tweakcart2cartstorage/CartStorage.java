@@ -23,8 +23,14 @@ import net.tweakcraft.tweakcart.api.TweakCartEvent;
 import net.tweakcraft.tweakcart.api.event.TweakVehiclePassesSignEvent;
 import net.tweakcraft.tweakcart.api.plugin.AbstractSignPlugin;
 import net.tweakcraft.tweakcart.model.IntMap;
+import net.tweakcraft.tweakcart.util.ChestUtil;
+import net.tweakcraft.tweakcart.util.InventoryManager;
 import net.tweakcraft.tweakcart2cartstorage.parser.ItemParser;
+import org.bukkit.block.Chest;
 import org.bukkit.entity.StorageMinecart;
+import org.bukkit.inventory.Inventory;
+
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -51,9 +57,19 @@ public class CartStorage extends AbstractSignPlugin {
     @Override
     public void onSignPass(TweakVehiclePassesSignEvent event) {
         if (event.getMinecart() instanceof StorageMinecart) {
-            StorageMinecart storageMinecart = (StorageMinecart)event.getMinecart();
-            IntMap map = ItemParser.parseSign(event.getSign(),event.getDirection());
-            //TODO: Move contents, but first find some chests to put the loot in.
+            StorageMinecart storageMinecart = (StorageMinecart) event.getMinecart();
+            Inventory cartInventory = storageMinecart.getInventory();
+            IntMap[] maps = ItemParser.parseSign(event.getSign(), event.getDirection());
+            List<Chest> chestList = ChestUtil.getChestsAroundBlock(event.getSign().getBlock(), 1);
+            for (Chest c : chestList) {
+                InventoryManager.moveContainerContents(cartInventory, c.getInventory(), maps);
+                /**
+                 * TODO: we still have to do something with the return data of this function. For example,
+                 * if the cart is empty, we can omit the storing in chests for at least one round. Also,
+                 * we should explain to the people which comes first, collect or deposit. It is of importance
+                 * in some situations.
+                 */
+            }
         }
     }
 }
