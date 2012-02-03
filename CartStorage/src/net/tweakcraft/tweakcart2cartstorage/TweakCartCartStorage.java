@@ -31,6 +31,5 @@ public class TweakCartCartStorage extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        //corePluginManager.registerEvent(...);
     }
 }

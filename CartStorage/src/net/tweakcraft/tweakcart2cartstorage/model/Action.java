@@ -19,9 +19,9 @@
 package net.tweakcraft.tweakcart2cartstorage.model;
 
 public enum Action {
-    NULL,
-    COLLECT,
-    DEPOSIT,
+    COLLECT, //FROM cart TO chest
+    DEPOSIT, //FROM chest TO cart
     ITEM,
-    ALL
+    ALL,
+    NULL
 }

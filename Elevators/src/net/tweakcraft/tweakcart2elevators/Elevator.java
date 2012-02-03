@@ -18,19 +18,18 @@
 
 package net.tweakcraft.tweakcart2elevators;
 
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.Sign;
-import org.bukkit.entity.Minecart;
 import net.tweakcraft.tweakcart.TweakCart;
-import net.tweakcraft.tweakcart.TweakPluginManager;
 import net.tweakcraft.tweakcart.api.TweakCartEvent;
 import net.tweakcraft.tweakcart.api.event.TweakVehicleCollidesWithSignEvent;
 import net.tweakcraft.tweakcart.api.plugin.AbstractSignPlugin;
 import net.tweakcraft.tweakcart.model.Direction;
 import net.tweakcraft.tweakcart.util.VehicleUtil;
 import net.tweakcraft.tweakcart2elevators.ElevatorParser.ElevateDirection;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
+import org.bukkit.entity.Minecart;
 
 public class Elevator extends AbstractSignPlugin {
     
@@ -44,9 +43,9 @@ public class Elevator extends AbstractSignPlugin {
 
     @Override
     public void onEnable() {
-        plugin.log("Elevators enabled");
         plugin.getPluginManager().registerEvent(this, TweakCartEvent.Sign.VehicleCollidesWithSignEvent, "elevator");
         parser = new ElevatorParser();
+        plugin.log("Elevators enabled");
     }
 
     @Override
