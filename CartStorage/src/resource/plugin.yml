@@ -1,5 +1,5 @@
 name: TweakCart2CartStorage
-main: net.tweakcraft.tweakcart2cartstorage.TweakCartCartStorage
+main: net.tweakcraft.tweakcart2cartstorage.cartstorage.CartStorage
 authors: [windwarrior, Edoxile]
 website: https://github.com/TweakCraft/TweakCart2Plugins
 version: 0.1

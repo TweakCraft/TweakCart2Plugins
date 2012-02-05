@@ -1,5 +1,5 @@
 name: TweakCart2Intersections
-main: net.tweakcraft.tweakcart2intersections.TweakCartIntersections
+main: net.tweakcraft.tweakcart.intersection.Intersection
 authors: [windwarrior, Edoxile]
 website: https://github.com/TweakCraft/TweakCart2Plugins
 version: 0.1
