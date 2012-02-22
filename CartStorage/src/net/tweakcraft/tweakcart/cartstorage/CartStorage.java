@@ -23,13 +23,7 @@ import net.tweakcraft.tweakcart.api.TweakCartEvent;
 import net.tweakcraft.tweakcart.api.TweakCartPlugin;
 
 public class CartStorage extends TweakCartPlugin {
-    TweakPluginManager corePluginManager = TweakPluginManager.getInstance();
     CartStorageEventListener eventListener = new CartStorageEventListener();
-
-    @Override
-    public void onDisable() {
-        //Has to be implemented
-    }
 
     @Override
     public String getPluginName() {
