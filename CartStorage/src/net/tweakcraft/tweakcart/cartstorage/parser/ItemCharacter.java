@@ -18,40 +18,36 @@
 
 package net.tweakcraft.tweakcart.cartstorage.parser;
 
-import java.util.HashMap;
-
 /**
  * Created by IntelliJ IDEA.
  *
  * @author Edoxile
  */
 public enum ItemCharacter {
-    FLIP("!"),
-    DELIMITER(":"),
-    AMOUNT("@"),
-    RANGE("-"),
-    DATA_VALUE(";"),
-    ID("");
+    FLIP('!'),
+    DELIMITER(':'),
+    AMOUNT('@'),
+    RANGE('-'),
+    DATA_VALUE(';'),
+    DIGIT(' ');
 
-    private String character;
+    private char character;
     private int priority;
-    private static HashMap<String, ItemCharacter> itemParserCharMap = new HashMap<String, ItemCharacter>();
     private static ItemCharacter[] itemParserPriorityArray;
 
     static {
         itemParserPriorityArray = new ItemCharacter[values().length];
         for (ItemCharacter aChar : values()) {
-            itemParserCharMap.put(aChar.getCharacter(), aChar);
             itemParserPriorityArray[aChar.ordinal()] = aChar;
         }
     }
 
-    private ItemCharacter(String c) {
+    private ItemCharacter(char c) {
         character = c;
         priority = ordinal();
     }
 
-    public String getCharacter() {
+    public char getCharacter() {
         return character;
     }
 
@@ -67,7 +63,21 @@ public enum ItemCharacter {
         }
     }
 
-    public static ItemCharacter getItemParseCharacter(String character) {
-        return itemParserCharMap.get(character);
+    public static ItemCharacter getItemParseCharacter(char tjar) {
+        if(Character.isDigit(tjar)){
+            return DIGIT;
+        }
+        switch(tjar){
+            case '!':
+                return FLIP;
+            case '@':
+                return AMOUNT;
+            case '-':
+                return RANGE;
+            case ';':
+                return DATA_VALUE;
+            default:
+                return null;
+        }
     }
 }
