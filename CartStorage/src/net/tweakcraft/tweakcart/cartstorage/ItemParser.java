@@ -50,6 +50,7 @@ public class ItemParser {
         if (isNegate) {
             line = line.substring(1);
         }
+        String[] numbers = new String[]{"", "", "", "", ""};
         int[] ints = new int[DataType.size];
         ItemCharacter lastChar = null;
         boolean range = false;
@@ -58,20 +59,15 @@ public class ItemParser {
             switch (newChar) {
                 case DIGIT:
                     if (!range && lastChar == null) {
-                        ints[DataType.START_ID.ordinal()] *= 10;
-                        ints[DataType.START_ID.ordinal()] += Integer.parseInt("" + newChar);
+                        numbers[DataType.START_ID.ordinal()] += newChar;
                     } else if (!range && lastChar == ItemCharacter.DATA_VALUE) {
-                        ints[DataType.START_DATA.ordinal()] *= 10;
-                        ints[DataType.START_DATA.ordinal()] += Integer.parseInt("" + newChar);
+                        numbers[DataType.START_DATA.ordinal()] += newChar;
                     } else if (range && lastChar == null) {
-                        ints[DataType.END_ID.ordinal()] *= 10;
-                        ints[DataType.END_ID.ordinal()] += Integer.parseInt("" + newChar);
+                        numbers[DataType.END_ID.ordinal()] += newChar;
                     } else if (range && lastChar == ItemCharacter.DATA_VALUE) {
-                        ints[DataType.END_DATA.ordinal()] *= 10;
-                        ints[DataType.END_DATA.ordinal()] += Integer.parseInt("" + newChar);
+                        numbers[DataType.END_DATA.ordinal()] += newChar;
                     } else if (lastChar == ItemCharacter.AMOUNT) {
-                        ints[DataType.AMOUNT.ordinal()] *= 10;
-                        ints[DataType.AMOUNT.ordinal()] += Integer.parseInt("" + newChar);
+                        numbers[DataType.AMOUNT.ordinal()] += newChar;
                     }
                     break;
                 case RANGE:
@@ -87,11 +83,18 @@ public class ItemParser {
                     lastChar = newChar;
                     break;
                 case DELIMITER:
+                    ints[DataType.START_ID.ordinal()] = Integer.parseInt(numbers[DataType.START_ID.ordinal()]);
+                    ints[DataType.START_DATA.ordinal()] = Integer.parseInt(numbers[DataType.START_DATA.ordinal()]);
+                    ints[DataType.END_ID.ordinal()] = Integer.parseInt(numbers[DataType.END_ID.ordinal()]);
+                    ints[DataType.END_DATA.ordinal()] = Integer.parseInt(numbers[DataType.END_DATA.ordinal()]);
+                    ints[DataType.AMOUNT.ordinal()] = Integer.parseInt(numbers[DataType.AMOUNT.ordinal()]);
+
                     if (isNegate) {
                         ints[DataType.AMOUNT.ordinal()] = 0;
-                    } else if (ints[DataType.AMOUNT.ordinal()] == 0) {
+                    } else if (ints[DataType.AMOUNT.ordinal()] < 1) {
                         ints[DataType.AMOUNT.ordinal()] = Integer.MAX_VALUE;
                     }
+
                     if (range) {
                         map.setRange(
                                 ints[DataType.START_ID.ordinal()],
@@ -101,9 +104,15 @@ public class ItemParser {
                                 ints[DataType.AMOUNT.ordinal()]
                         );
                     } else {
-                        map.setInt(ints[DataType.START_ID.ordinal()], (byte) ints[DataType.START_DATA.ordinal()], ints[DataType.AMOUNT.ordinal()]);
+                        map.setInt(
+                                ints[DataType.START_ID.ordinal()],
+                                (byte) ints[DataType.START_DATA.ordinal()],
+                                ints[DataType.AMOUNT.ordinal()]
+                        );
                     }
+
                     ints = new int[DataType.size];
+                    numbers = new String[]{"", "", "", "", ""};
                     lastChar = null;
                     range = false;
                     break;
@@ -168,7 +177,7 @@ public class ItemParser {
         if (line.length() > 0) {
             if (Character.isDigit(firstChar) || firstChar == '!') {
                 return Action.ITEM;
-            } else if (line.charAt(1) == '+'/*TODO: insert direction parser check*/) {
+            } else if (line.charAt(1) == '+') {
                 switch (firstChar) {
                     case 'n':
                     case 's':

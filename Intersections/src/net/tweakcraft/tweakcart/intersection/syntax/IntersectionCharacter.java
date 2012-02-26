@@ -18,45 +18,57 @@
 
 package net.tweakcraft.tweakcart.intersection.syntax;
 
-import java.util.HashMap;
-
 /**
  * Created by IntelliJ IDEA.
  *
  * @author Edoxile
  */
 public enum IntersectionCharacter {
-    FULL_CART("#"),
-    EMPTY_CART("&"),
+    FULL_CART('#'),
+    EMPTY_CART('&'),
 
-    MINECART("m"),
-    STORAGE_CART("c"),
-    POWERED_CART("p"),
-    ANY_CART("a"),
+    MINECART('m'),
+    STORAGE_CART('c'),
+    POWERED_CART('p'),
+    ANY_CART('a'),
 
-    DIRECTION_DELIMITER(";"),
-    CART_DELIMITER(":"),
-    REMAINDER_DELIMITER("!");
+    DIRECTION_DELIMITER(';'),
+    CART_DELIMITER(':'),
+    REMAINDER_DELIMITER('!');
 
-    private static HashMap<String, IntersectionCharacter> intersectionCharacterMap = new HashMap<String, IntersectionCharacter>();
-
-    static {
-        for (IntersectionCharacter ic : IntersectionCharacter.values()) {
-            intersectionCharacterMap.put(ic.getCharacter(), ic);
+    public static IntersectionCharacter getIntersectionCharacter(char character) {
+        switch (character) {
+            case '#':
+                return FULL_CART;
+            case '&':
+                return EMPTY_CART;
+            case 'm':
+                return MINECART;
+            case 'c':
+                return STORAGE_CART;
+            case 'p':
+                return POWERED_CART;
+            case 'a':
+                return ANY_CART;
+            case ';':
+                return DIRECTION_DELIMITER;
+            case ':':
+                return CART_DELIMITER;
+            case '!':
+                return REMAINDER_DELIMITER;
+            default:
+                return null;
         }
     }
 
-    public static IntersectionCharacter getIntersectionCharacter(String character) {
-        return intersectionCharacterMap.get(character);
-    }
+    private char character;
 
-    private String character;
-
-    private IntersectionCharacter(String c) {
+    private IntersectionCharacter(char c) {
         character = c;
     }
 
-    public String getCharacter() {
+    @Deprecated
+    public char getCharacter() {
         return character;
     }
 }
