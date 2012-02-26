@@ -18,10 +18,13 @@
 
 package net.tweakcraft.tweakcart.cartstorage;
 
+import net.tweakcraft.tweakcart.api.parser.DirectionParser;
 import net.tweakcraft.tweakcart.cartstorage.model.Action;
 import net.tweakcraft.tweakcart.cartstorage.parser.ItemCharacter;
 import net.tweakcraft.tweakcart.model.Direction;
 import net.tweakcraft.tweakcart.model.IntMap;
+import net.tweakcraft.tweakcart.util.StringUtil;
+import org.bukkit.block.Sign;
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,12 +38,19 @@ public class ItemParser {
         START_DATA,
         END_ID,
         END_DATA,
-        AMOUNT,
+        AMOUNT;
+
+        public static final int size = /*values().length*/ 5;
     }
 
+    //TODO: optimize, don't use .toLowerCase() too often...
     public static IntMap parseLine(String line, Direction d, IntMap map) {
         //The String 'line' shouldn't contain any directions anymore.
-        int[] ints = new int[DataType.values().length];
+        boolean isNegate = line.charAt(0) == ItemCharacter.NEGATE.getCharacter();
+        if (isNegate) {
+            line = line.substring(1);
+        }
+        int[] ints = new int[DataType.size];
         ItemCharacter lastChar = null;
         boolean range = false;
         for (char character : line.toCharArray()) {
@@ -65,15 +75,21 @@ public class ItemParser {
                     }
                     break;
                 case RANGE:
-                    range = true;
-                    lastChar = null;
+                    if (range) {
+                        return null;
+                    } else {
+                        range = true;
+                        lastChar = null;
+                    }
                     break;
                 case DATA_VALUE:
                 case AMOUNT:
                     lastChar = newChar;
                     break;
                 case DELIMITER:
-                    if (ints[DataType.AMOUNT.ordinal()] == 0) {
+                    if (isNegate) {
+                        ints[DataType.AMOUNT.ordinal()] = 0;
+                    } else if (ints[DataType.AMOUNT.ordinal()] == 0) {
                         ints[DataType.AMOUNT.ordinal()] = Integer.MAX_VALUE;
                     }
                     if (range) {
@@ -87,7 +103,7 @@ public class ItemParser {
                     } else {
                         map.setInt(ints[DataType.START_ID.ordinal()], (byte) ints[DataType.START_DATA.ordinal()], ints[DataType.AMOUNT.ordinal()]);
                     }
-                    ints = new int[DataType.values().length];
+                    ints = new int[DataType.size];
                     lastChar = null;
                     range = false;
                     break;
@@ -99,105 +115,50 @@ public class ItemParser {
         return map;
     }
 
-    /*
-    public static IntMap parseLine(String line, Direction d, IntMap map) {
-        //TODO: Can't the ItemCharacters.getCharacter() function return type 'char'? AKA is it possible to split on char?
-        //TODO: First chop of direction, then run through the rest of the parser
-        boolean remove = line.charAt(0) == ItemCharacter.FLIP.getCharacter().charAt(0);
-        if (remove) {
-            line = line.substring(1);
-        }
-        String[] apples = line.split(ItemCharacter.DELIMITER.getCharacter());
-        for (String apple : apples) {
-            int amount = Integer.MAX_VALUE;
-            byte data = 0;
-            int id = 0;
-            //This is seen as a separate part. No check on .length because it doesn't matter if there is
-            //just one part or OVER 9000. Because an index is not necessary here, a for-each loop can be used.
-            String[] mango = apple.split(ItemCharacter.AMOUNT.getCharacter());
-            if (mango.length == 2) {
-                //So there is an amount, nice!
-                amount = Integer.parseInt(mango[1]);
-                //TODO: check if amount < 1 etc.
-            } else if (mango.length > 2) {
-                return null;
-            }
-            //TODO: check if this is possible. Otherwise we have to find a smart way to recycle our objects.
-            mango = mango[0].split(ItemCharacter.RANGE.getCharacter());
-            if (mango.length == 1) {
-                //So, now we only need to check for a data-value :D
-                mango = mango[0].split(ItemCharacter.DATA_VALUE.getCharacter());
-                id = Integer.parseInt(mango[0]);
-                if (mango.length == 2) {
-                    data = Byte.parseByte(mango[1]);
-                } else if (mango.length > 2) {
-                    return null;
-                }
-                map.setInt(id, data, amount);
-            } else if (mango.length == 2) {
-                //So we have a range. Check range for data-values and put values into integers and bytes
-                String[] banana = mango[0].split(ItemCharacter.DATA_VALUE.getCharacter());
-                int sId = Integer.parseInt(banana[0]);
-                byte sData = 0;
-                if (banana.length == 2) {
-                    sData = Byte.parseByte(banana[1]);
-                } else if (banana.length > 2) {
-                    return null;
-                }
-                banana = mango[1].split(ItemCharacter.DATA_VALUE.getCharacter());
-                int eId = Integer.parseInt(banana[0]);
-                byte eData = 0;
-                if (banana.length == 2) {
-                    eData = Byte.parseByte(banana[1]);
-                } else if (banana.length > 2) {
-                    return null;
-                }
-                map.setRange(sId, sData, eId, eData, amount);
-            } else {
-                return null;
-            }
-        }
-        return map;
-    }
-
-    public static IntMap[] parseSign(Sign s, Direction d) {
-        //LOL, gotta love this kind of code :P
+    public static IntMap[] parseSign(Sign sign, Direction direction) {
+        Action oldAction = Action.NULL;
         IntMap[] maps = new IntMap[]{new IntMap(), new IntMap()};
-        Action toDo = null;
-        for (String action : s.getLines()) {
-            action = StringUtil.stripBrackets(action.toLowerCase());
-            switch (parseAction(action)) {
-                case COLLECT:
-                    toDo = Action.COLLECT;
-                    break;
-                case DEPOSIT:
-                    toDo = Action.DEPOSIT;
-                    break;
-                case ALL:
-                    if (toDo != null) {
-                        maps[toDo.ordinal()].fillAll();
-                    }
-                    break;
-                case ITEM:
-                    //check for null;
-                    if (toDo != null) {
-                        maps[toDo.ordinal()] = parseLine(action, d, maps[toDo.ordinal()]);
-                        if (maps[toDo.ordinal()] == null) {
-                            //Sytnax error on sign, break form loop because continuing won't have anny effect and would only cause NPE's
-                            return null;
+        for (String line : sign.getLines()) {
+            Direction requiredDirection = DirectionParser.parseDirection(line);
+            if (requiredDirection == Direction.SELF || requiredDirection == direction) {
+                line = DirectionParser.removeDirection(line);
+                Action newAction = parseAction(StringUtil.stripBrackets(line));
+                switch (newAction) {
+                    case ALL:
+                        if (oldAction != Action.NULL) {
+                            maps[oldAction.ordinal()].fillAll();
+                            if (maps[oldAction.ordinal()] == null) {
+                                //Syntax error, stop with map-building
+                                return null;
+                            }
                         }
-                    }
-                    break;
-                default:
-                    //Either the syntax is fucked up or some kind of comment. Don't parse but do continue.
-                    break;
+                        break;
+                    case ITEM:
+                        if (oldAction != Action.NULL) {
+                            maps[oldAction.ordinal()] = parseLine(line, direction, maps[oldAction.ordinal()]);
+                            if (maps[oldAction.ordinal()] == null) {
+                                //Syntax error, stop with map-building
+                                return null;
+                            }
+                        }
+                        break;
+                    case COLLECT:
+                        oldAction = newAction;
+                        break;
+                    case DEPOSIT:
+                        oldAction = newAction;
+                        break;
+                    default:
+                        //Syntax error, skip line
+                        break;
+                }
             }
         }
         return maps;
     }
-    */
 
     public static Action parseAction(String line) {
+        line = line.toLowerCase();
         if (line == null || line.equals("")) {
             return Action.NULL;
         }

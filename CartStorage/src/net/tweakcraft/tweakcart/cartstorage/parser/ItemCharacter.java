@@ -24,7 +24,7 @@ package net.tweakcraft.tweakcart.cartstorage.parser;
  * @author Edoxile
  */
 public enum ItemCharacter {
-    FLIP('!'),
+    NEGATE('!'),
     DELIMITER(':'),
     AMOUNT('@'),
     RANGE('-'),
@@ -69,7 +69,7 @@ public enum ItemCharacter {
         }
         switch(tjar){
             case '!':
-                return FLIP;
+                return NEGATE;
             case '@':
                 return AMOUNT;
             case '-':
