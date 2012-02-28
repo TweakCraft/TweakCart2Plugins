@@ -19,8 +19,12 @@
 package net.tweakcraft.tweakcart.intersection;
 
 import net.tweakcraft.tweakcart.api.parser.DirectionParser;
+import net.tweakcraft.tweakcart.intersection.syntax.IntersectionCharacter;
 import net.tweakcraft.tweakcart.model.Direction;
+import net.tweakcraft.tweakcart.util.InventoryManager;
 import org.bukkit.entity.Minecart;
+import org.bukkit.entity.PoweredMinecart;
+import org.bukkit.entity.StorageMinecart;
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,11 +34,56 @@ import org.bukkit.entity.Minecart;
 public class IntersectionParser {
     public static Direction parseIntersection(String line, Minecart cart, Direction cartDirection, boolean isFull) {
         //Returns the direction to go to. null = parse error, BlockFace.SELF is incompatible direction.
-        int direction = parseDirection(line, cartDirection);
-
-        Direction remainder = DirectionParser.parseDirection(line);
-        //Remainder
-        return remainder;
+        Direction direction = DirectionParser.parseDirection(line);
+        int directionCheck = (direction == null) ? ((direction == cartDirection) ? 1 : 0) : -1;
+        if (direction == null) {
+            return Direction.SELF;
+        } else if (direction != cartDirection) {
+            return null;
+        } else {
+            line = DirectionParser.removeDirection(line);
+            boolean containsCartType = false;
+            Boolean cartMustBeEmpty = null;
+            //So, now that we know that the cart is going in the correct direction, recycle the direction object.
+            mainLoop:for(char character : line.toCharArray()) {
+                IntersectionCharacter intersectionCharacter = IntersectionCharacter.getIntersectionCharacter(character);
+                switch (intersectionCharacter){
+                    case MINECART:
+                        containsCartType = containsCartType || (!(cart instanceof PoweredMinecart) && !(cart instanceof StorageMinecart));
+                        break;
+                    case POWERED_CART:
+                        containsCartType = containsCartType || (cart instanceof PoweredMinecart);
+                        break;
+                    case STORAGE_CART:
+                        containsCartType = containsCartType || (cart instanceof StorageMinecart);
+                        break;
+                    case EMPTY_CART:
+                        cartMustBeEmpty = true;
+                        break;
+                    case FULL_CART:
+                        cartMustBeEmpty = false;
+                        break;
+                    case CART_DELIMITER:
+                        if(!containsCartType){
+                            //Reset variables;
+                            continue mainLoop;
+                        }
+                        if(cartMustBeEmpty == null){
+                            //State doesn't matter
+                        } else if(cartMustBeEmpty){
+                            //Check if cart is empty
+                            if(cart instanceof StorageMinecart && !InventoryManager.isEmpty(((StorageMinecart) cart).getInventory().getContents())){
+                                
+                            }
+                        }
+                        break;
+                    default:
+                        return null;
+                }
+            }
+            //Return the direction
+            return direction;
+        }
     }
 
     //1 = correct direction, 0 = wrong direction, -1 is no direction found
