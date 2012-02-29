@@ -32,22 +32,24 @@ import org.bukkit.entity.StorageMinecart;
  * @author Edoxile
  */
 public class IntersectionParser {
-    public static Direction parseIntersection(String line, Minecart cart, Direction cartDirection, boolean isFull) {
+    public static Direction parseIntersection(String line, Minecart cart, Direction cartDirection) {
         //Returns the direction to go to. null = parse error, BlockFace.SELF is incompatible direction.
         Direction direction = DirectionParser.parseDirection(line);
         int directionCheck = (direction == null) ? ((direction == cartDirection) ? 1 : 0) : -1;
         if (direction == null) {
-            return Direction.SELF;
-        } else if (direction != cartDirection) {
             return null;
+        } else if (direction != cartDirection) {
+            return Direction.SELF;
         } else {
             line = DirectionParser.removeDirection(line);
             boolean containsCartType = false;
+            boolean isRemainder = false;
             Boolean cartMustBeEmpty = null;
             //So, now that we know that the cart is going in the correct direction, recycle the direction object.
-            mainLoop:for(char character : line.toCharArray()) {
+            mainLoop:
+            for (char character : line.toCharArray()) {
                 IntersectionCharacter intersectionCharacter = IntersectionCharacter.getIntersectionCharacter(character);
-                switch (intersectionCharacter){
+                switch (intersectionCharacter) {
                     case MINECART:
                         containsCartType = containsCartType || (!(cart instanceof PoweredMinecart) && !(cart instanceof StorageMinecart));
                         break;
@@ -57,6 +59,8 @@ public class IntersectionParser {
                     case STORAGE_CART:
                         containsCartType = containsCartType || (cart instanceof StorageMinecart);
                         break;
+                    case ANY_CART:
+                        containsCartType = true;
                     case EMPTY_CART:
                         cartMustBeEmpty = true;
                         break;
@@ -64,25 +68,64 @@ public class IntersectionParser {
                         cartMustBeEmpty = false;
                         break;
                     case CART_DELIMITER:
-                        if(!containsCartType){
-                            //Reset variables;
+                        if (!containsCartType) {
+                            //TODO: Reset variables;
                             continue mainLoop;
                         }
-                        if(cartMustBeEmpty == null){
+                        if (cartMustBeEmpty == null) {
                             //State doesn't matter
-                        } else if(cartMustBeEmpty){
+                        } else if (cartMustBeEmpty) {
                             //Check if cart is empty
-                            if(cart instanceof StorageMinecart && !InventoryManager.isEmpty(((StorageMinecart) cart).getInventory().getContents())){
-                                
+                            if (cart instanceof StorageMinecart && !InventoryManager.isEmpty(((StorageMinecart) cart).getInventory().getContents())) {
+                                //TODO: Reset variables;
+                                continue mainLoop;
+                            } else if (cart instanceof PoweredMinecart) {
+                                //TODO: check if it's possible to check if PoweredMinecart is empty or not.
+                                continue mainLoop;
+                            } else if (!(cart instanceof PoweredMinecart) && !(cart instanceof StorageMinecart) && cart.getPassenger() != null) {
+                                continue mainLoop;
                             }
+                            //Send cart to direction
+                        } else {
+                            if (cart instanceof StorageMinecart && InventoryManager.isEmpty(((StorageMinecart) cart).getInventory().getContents())) {
+                                //TODO: Reset variables;
+                                continue mainLoop;
+                            } else if (cart instanceof PoweredMinecart) {
+                                //TODO: check if it's possible to check if PoweredMinecart is empty or not.
+                                continue mainLoop;
+                            } else if (cart.getPassenger() == null) {
+                                continue mainLoop;
+                            }
+                            return direction;
+                            //Send cart to direction         
+                            //VehicleUtil.moveCartRelative(cart, cartDirection.getModX() + direction.getModX(), 0, cartDirection.getModZ() + direction.getModZ());
+                            //Vector velocity = cart.getVelocity();
+                            //cart.setVelocity(new Vector(direction.getModX(), direction.getModY(), direction.getModZ()).multiply(MathUtil.max(velocity.getX(), velocity.getZ())));
                         }
                         break;
+                    case DIRECTION_DELIMITER:
+                        continue mainLoop;
+                    case DIRECTION:
+                        direction = IntersectionCharacter.getDirection(character);
+                        if (direction == null) {
+                            //Something went terribly wrong -_-
+                            return null;
+                        } else {
+                            if(isRemainder){
+                                return direction;
+                            }
+                            continue mainLoop;
+                        }
+                    case REMAINDER_DELIMITER:
+                        isRemainder = true;
+                        break;
                     default:
+                        //Syntax error
                         return null;
                 }
             }
             //Return the direction
-            return direction;
+            return Direction.SELF;
         }
     }
 

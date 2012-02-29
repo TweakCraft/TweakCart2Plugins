@@ -18,6 +18,8 @@
 
 package net.tweakcraft.tweakcart.intersection.syntax;
 
+import net.tweakcraft.tweakcart.model.Direction;
+
 /**
  * Created by IntelliJ IDEA.
  *
@@ -32,11 +34,14 @@ public enum IntersectionCharacter {
     POWERED_CART('p'),
     ANY_CART('a'),
 
+    DIRECTION(' '),
+
     DIRECTION_DELIMITER(';'),
     CART_DELIMITER(':'),
     REMAINDER_DELIMITER('!');
 
     public static IntersectionCharacter getIntersectionCharacter(char character) {
+        //line.toLowerCase() should have been used earlier
         switch (character) {
             case '#':
                 return FULL_CART;
@@ -56,6 +61,30 @@ public enum IntersectionCharacter {
                 return CART_DELIMITER;
             case '!':
                 return REMAINDER_DELIMITER;
+            case 'n':
+                return DIRECTION;
+            case 's':
+                return DIRECTION;
+            case 'e':
+                return DIRECTION;
+            case 'w':
+                return DIRECTION;
+            default:
+                return null;
+        }
+    }
+    
+    public static Direction getDirection(char character){
+        //line.toLowerCase() should have been used earlier
+        switch (character){
+            case 'n':
+                return Direction.NORTH;
+            case 's':
+                return Direction.SOUTH;
+            case 'e':
+                return Direction.EAST;
+            case 'w':
+                return Direction.WEST;
             default:
                 return null;
         }
