@@ -3,3 +3,4 @@ main: net.tweakcraft.tweakcart.cartstorage.CartStorage
 authors: [windwarrior, Edoxile]
 website: https://github.com/TweakCraft/TweakCart2Plugins
 version: 0.1
+depend: [TweakCart]
