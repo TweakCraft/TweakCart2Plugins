@@ -19,7 +19,7 @@
 package net.tweakcraft.tweakcart.elevator;
 
 import net.tweakcraft.tweakcart.api.event.TweakVehicleCollidesWithSignEvent;
-import net.tweakcraft.tweakcart.api.listeners.TweakSignEventListener;
+import net.tweakcraft.tweakcart.api.event.listeners.TweakSignEventListener;
 import net.tweakcraft.tweakcart.model.Direction;
 import net.tweakcraft.tweakcart.util.VehicleUtil;
 import org.bukkit.Location;
@@ -29,9 +29,9 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
 
 public class ElevatorEventListener extends TweakSignEventListener {
-    
+
     private static final int MAX_HEIGHT = 32;
-    
+
     @Override
     public void onSignCollision(TweakVehicleCollidesWithSignEvent event) {
         Minecart mine = event.getMinecart();
@@ -40,17 +40,17 @@ public class ElevatorEventListener extends TweakSignEventListener {
         ElevatorParser.ElevateDirection ev = ElevatorParser.parseSign(sign);
         System.out.println(ev);
         Location newLocation = null;
-        switch(ev){
-        case UP:
-            newLocation = findSign(true, sign, heading);
-            break;
-        case DOWN:
-            newLocation = findSign(false, sign, heading);
-            break;
+        switch (ev) {
+            case UP:
+                newLocation = findSign(true, sign, heading);
+                break;
+            case DOWN:
+                newLocation = findSign(false, sign, heading);
+                break;
         }
-        if(newLocation != null){
+        if (newLocation != null) {
             //Move the cart a bit (in the direction it's going) so it won't get stuck in a sign
-            VehicleUtil.moveCart(mine, newLocation.add((double)heading.getModX()*1.5,(double)heading.getModY()*1.5,(double)heading.getModZ()*1.5));
+            VehicleUtil.moveCart(mine, newLocation.add((double) heading.getModX() * 1.5, (double) heading.getModY() * 1.5, (double) heading.getModZ() * 1.5));
         }
     }
 
@@ -58,20 +58,19 @@ public class ElevatorEventListener extends TweakSignEventListener {
     private Location findSign(boolean isUp, Sign s, Direction heading) {
         Block signBlock = s.getBlock();
         int height = s.getY();
-        
-        int maxIt = Math.min(isUp? 129 - height : height, MAX_HEIGHT); 
-        BlockFace direction = isUp? BlockFace.UP : BlockFace.DOWN;
-        
-        for(int i = 0; i < maxIt; i++){
+
+        int maxIt = Math.min(isUp ? 129 - height : height, MAX_HEIGHT);
+        BlockFace direction = isUp ? BlockFace.UP : BlockFace.DOWN;
+
+        for (int i = 0; i < maxIt; i++) {
             signBlock = signBlock.getRelative(direction);
-            if(signBlock.getState() instanceof Sign && VehicleUtil.canSpawn(signBlock.getRelative(heading.getModX(), heading.getModY(), heading.getModZ()))){
-                
+            if (signBlock.getState() instanceof Sign && VehicleUtil.isRail(signBlock.getRelative(heading.getModX(), heading.getModY(), heading.getModZ()))) {
+
                 return signBlock.getLocation();
             }
         }
         return null;
     }
-    
 
 
 }

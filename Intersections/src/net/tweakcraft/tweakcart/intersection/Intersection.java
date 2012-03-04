@@ -18,8 +18,8 @@
 
 package net.tweakcraft.tweakcart.intersection;
 
-import net.tweakcraft.tweakcart.TweakPluginManager;
-import net.tweakcraft.tweakcart.api.TweakCartPlugin;
+import net.tweakcraft.tweakcart.api.model.TweakCartPlugin;
+import net.tweakcraft.tweakcart.util.TweakPluginManager;
 
 public class Intersection extends TweakCartPlugin {
 

@@ -64,10 +64,10 @@ public enum ItemCharacter {
     }
 
     public static ItemCharacter getItemParseCharacter(char tjar) {
-        if(Character.isDigit(tjar)){
+        if (Character.isDigit(tjar)) {
             return DIGIT;
         }
-        switch(tjar){
+        switch (tjar) {
             case '!':
                 return NEGATE;
             case ':':

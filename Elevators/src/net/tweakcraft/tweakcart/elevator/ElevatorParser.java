@@ -23,8 +23,8 @@ import org.bukkit.block.Sign;
 public class ElevatorParser {
     public static final ElevateDirection poweredDirection = ElevateDirection.DOWN;
     public static final ElevateDirection unpoweredDirection = ElevateDirection.UP;
-    
-    public enum ElevateDirection{
+
+    public enum ElevateDirection {
         UP,
         DOWN
     }

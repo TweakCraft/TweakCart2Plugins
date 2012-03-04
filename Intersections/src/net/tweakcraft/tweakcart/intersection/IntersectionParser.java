@@ -18,7 +18,7 @@
 
 package net.tweakcraft.tweakcart.intersection;
 
-import net.tweakcraft.tweakcart.api.parser.DirectionParser;
+import net.tweakcraft.tweakcart.api.model.parser.DirectionParser;
 import net.tweakcraft.tweakcart.intersection.syntax.IntersectionCharacter;
 import net.tweakcraft.tweakcart.model.Direction;
 import net.tweakcraft.tweakcart.util.InventoryManager;
@@ -111,7 +111,7 @@ public class IntersectionParser {
                             //Something went terribly wrong -_-
                             return null;
                         } else {
-                            if(isRemainder){
+                            if (isRemainder) {
                                 return direction;
                             }
                             continue mainLoop;

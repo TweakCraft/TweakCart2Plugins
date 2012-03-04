@@ -18,14 +18,14 @@
 
 package net.tweakcraft.tweakcart.debug;
 
-import net.tweakcraft.tweakcart.TweakPluginManager;
-import net.tweakcraft.tweakcart.api.TweakCartEvent;
-import net.tweakcraft.tweakcart.api.TweakCartPlugin;
-import net.tweakcraft.tweakcart.api.TweakPermissionsHandler;
-import net.tweakcraft.tweakcart.api.TweakPermissionsManager;
 import net.tweakcraft.tweakcart.api.event.*;
-import net.tweakcraft.tweakcart.api.listeners.TweakBlockEventListener;
-import net.tweakcraft.tweakcart.api.listeners.TweakSignEventListener;
+import net.tweakcraft.tweakcart.api.event.listeners.TweakBlockEventListener;
+import net.tweakcraft.tweakcart.api.event.listeners.TweakSignEventListener;
+import net.tweakcraft.tweakcart.api.model.TweakCartEvent;
+import net.tweakcraft.tweakcart.api.model.TweakCartPlugin;
+import net.tweakcraft.tweakcart.api.model.TweakPermissionsHandler;
+import net.tweakcraft.tweakcart.api.util.TweakPermissionsManager;
+import net.tweakcraft.tweakcart.util.TweakPluginManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
@@ -80,7 +80,7 @@ public class Debug extends TweakCartPlugin {
         }
     }
 
-    private class DebugPermissionsHandler implements TweakPermissionsHandler{
+    private class DebugPermissionsHandler implements TweakPermissionsHandler {
 
         @Override
         public boolean canVehicleCollect(TweakVehicleCollectEvent tweakVehicleCollectEvent) {

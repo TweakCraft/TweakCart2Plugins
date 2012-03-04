@@ -73,10 +73,10 @@ public enum IntersectionCharacter {
                 return null;
         }
     }
-    
-    public static Direction getDirection(char character){
+
+    public static Direction getDirection(char character) {
         //line.toLowerCase() should have been used earlier
-        switch (character){
+        switch (character) {
             case 'n':
                 return Direction.NORTH;
             case 's':
