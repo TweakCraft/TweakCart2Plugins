@@ -18,7 +18,7 @@
 
 package net.tweakcraft.tweakcart.cartstorage;
 
-import net.tweakcraft.tweakcart.api.parser.DirectionParser;
+import net.tweakcraft.tweakcart.api.model.parser.DirectionParser;
 import net.tweakcraft.tweakcart.cartstorage.model.Action;
 import net.tweakcraft.tweakcart.cartstorage.parser.ItemCharacter;
 import net.tweakcraft.tweakcart.model.Direction;

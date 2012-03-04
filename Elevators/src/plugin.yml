@@ -1,0 +1,7 @@
+name: TweakCart2Elevators
+depend: [TweakCart]
+main: net.tweakcraft.tweakcart.elevator.Elevator
+authors: [windwarrior, Edoxile]
+website: https://github.com/TweakCraft/TweakCart2Plugins
+version: 0.1
+
