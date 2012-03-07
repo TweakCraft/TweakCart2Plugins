@@ -62,10 +62,12 @@ public class Debug extends TweakCartPlugin {
 
         public void onVehicleBlockCollision(TweakVehicleBlockCollisionEvent event) {
             Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "VehicleBlockCollision event thrown");
+            Bukkit.getServer().broadcastMessage(ChatColor.BLUE + "Data: " + event.getBlock().getType().name());
         }
 
         public void onVehicleDetect(TweakVehicleBlockDetectEvent event) {
             Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "VehicleBlockDetect event thrown");
+            Bukkit.getServer().broadcastMessage(ChatColor.BLUE + "Data: " + event.getBlock().getType().name());
         }
     }
 
@@ -73,10 +75,12 @@ public class Debug extends TweakCartPlugin {
 
         public void onSignPass(TweakVehiclePassesSignEvent event) {
             Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "VehiclePassesSign event thrown");
+            Bukkit.getServer().broadcastMessage(ChatColor.BLUE + "First line: " + event.getSign().getLine(0));
         }
 
         public void onSignCollision(TweakVehicleCollidesWithSignEvent event) {
             Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "VehicleCollidesWithSign event thrown");
+            Bukkit.getServer().broadcastMessage(ChatColor.BLUE + "First line: " + event.getSign().getLine(0));
         }
     }
 

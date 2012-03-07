@@ -45,10 +45,6 @@ public class CartStorage extends TweakCartPlugin {
         pluginManager.registerEvent(eventListener, TweakCartEvent.Sign.VehiclePassesSignEvent, "collect items", "deposit items");
     }
 
-    @Override
-    public void onEnable() {
-    }
-
     /**
      * Created by IntelliJ IDEA.
      *
