@@ -38,6 +38,7 @@ public class Debug extends TweakCartPlugin {
 
     private DebugBlockListener blockListener = new DebugBlockListener();
     private DebugSignListener signListener = new DebugSignListener();
+    private DebugSignKeywordListener signKeywordListener = new DebugSignKeywordListener();
     private DebugPermissionsHandler debugPermissionsHandler = new DebugPermissionsHandler();
 
     @Override
@@ -50,6 +51,7 @@ public class Debug extends TweakCartPlugin {
         pluginManager.registerEvent(blockListener, TweakCartEvent.Block.values());
         for (TweakCartEvent.Sign signEvent : TweakCartEvent.Sign.values()) {
             pluginManager.registerEvent(signListener, signEvent);
+            pluginManager.registerEvent(signKeywordListener, signEvent, "a");
         }
         TweakPermissionsManager.getInstance().addHandler(debugPermissionsHandler);
     }
@@ -81,6 +83,19 @@ public class Debug extends TweakCartPlugin {
         public void onSignCollision(TweakVehicleCollidesWithSignEvent event) {
             Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "VehicleCollidesWithSign event thrown");
             Bukkit.getServer().broadcastMessage(ChatColor.BLUE + "First line: " + event.getSign().getLine(0));
+        }
+    }
+
+    private class DebugSignKeywordListener extends TweakSignEventListener {
+
+        public void onSignPass(TweakVehiclePassesSignEvent event) {
+            Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "VehiclePassesSign event thrown");
+            Bukkit.getServer().broadcastMessage(ChatColor.BLUE + "Keyword: " + event.getKeyword());
+        }
+
+        public void onSignCollision(TweakVehicleCollidesWithSignEvent event) {
+            Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "VehicleCollidesWithSign event thrown");
+            Bukkit.getServer().broadcastMessage(ChatColor.BLUE + "Keyword: " + event.getKeyword());
         }
     }
 
