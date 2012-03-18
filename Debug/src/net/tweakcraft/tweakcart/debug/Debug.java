@@ -28,6 +28,13 @@ import net.tweakcraft.tweakcart.api.util.TweakPermissionsManager;
 import net.tweakcraft.tweakcart.util.TweakPluginManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.StorageMinecart;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.vehicle.VehicleDestroyEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.PluginManager;
 
 /**
  * Created by IntelliJ IDEA.
@@ -40,7 +47,15 @@ public class Debug extends TweakCartPlugin {
     private DebugSignListener signListener = new DebugSignListener();
     private DebugSignKeywordListener signKeywordListener = new DebugSignKeywordListener();
     private DebugPermissionsHandler debugPermissionsHandler = new DebugPermissionsHandler();
-
+    
+    @Override
+    public void onEnable() {
+        super.onEnable();
+        
+        PluginManager pm = Bukkit.getPluginManager();
+        
+        pm.registerEvents(blockListener, this);
+    }
     @Override
     public String getPluginName() {
         return "Debug";
@@ -56,7 +71,7 @@ public class Debug extends TweakCartPlugin {
         TweakPermissionsManager.getInstance().addHandler(debugPermissionsHandler);
     }
 
-    private class DebugBlockListener extends TweakBlockEventListener {
+    public class DebugBlockListener extends TweakBlockEventListener implements Listener{
 
         public void onVehicleBlockChange(TweakVehicleBlockChangeEvent event) {
             Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "VehicleBlockChange event thrown");
@@ -70,6 +85,15 @@ public class Debug extends TweakCartPlugin {
         public void onVehicleDetect(TweakVehicleBlockDetectEvent event) {
             Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "VehicleBlockDetect event thrown");
             Bukkit.getServer().broadcastMessage(ChatColor.BLUE + "Data: " + event.getBlock().getType().name());
+        }
+        
+        @EventHandler
+        public void onVehicleDestroy(VehicleDestroyEvent ev){
+            if(ev.getVehicle() instanceof StorageMinecart){
+                ev.getVehicle().getWorld().dropItem(ev.getVehicle().getLocation(), new ItemStack(Material.STORAGE_MINECART, 1));
+                ev.getVehicle().remove();
+                ev.setCancelled(true);
+            }
         }
     }
 

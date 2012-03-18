@@ -53,6 +53,7 @@ public class CartStorage extends TweakCartPlugin {
     public static class CartStorageEventListener extends TweakSignEventListener {
         @Override
         public void onSignPass(TweakVehiclePassesSignEvent event) {
+            System.out.println("Hai");
             if (event.getMinecart() instanceof StorageMinecart) {
                 StorageMinecart storageMinecart = (StorageMinecart) event.getMinecart();
                 Inventory cartInventory = storageMinecart.getInventory();
@@ -60,6 +61,7 @@ public class CartStorage extends TweakCartPlugin {
                 if (maps != null) {
                     List<Chest> chestList = ChestUtil.getChestsAroundBlock(event.getSign().getBlock(), 1);
                     for (Chest c : chestList) {
+                        System.out.println(c.getLocation());
                         InventoryManager.moveContainerContents(cartInventory, c.getInventory(), maps);
                         /**
                          * TODO: we still have to do something with the return data of this function. For example,
@@ -68,6 +70,8 @@ public class CartStorage extends TweakCartPlugin {
                          * in some situations.
                          */
                     }
+                } else{
+                    System.out.println("Map is null!");
                 }
             }
         }
