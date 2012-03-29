@@ -88,7 +88,7 @@ public class ItemParser {
                 itemFrom  = checkIDData(itemRange[0]);
             }else if(itemRange.length == 2){
                 itemFrom = checkIDData(itemRange[0]);
-                itemTo = checkIDData(itemRange[0]);
+                itemTo = checkIDData(itemRange[1]);
                 range = true;
             }else{
                 //User has made a range of ranges, thats not possible :(
