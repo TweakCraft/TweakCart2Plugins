@@ -6,3 +6,6 @@
 /.idea
 *.iml
 /out
+/build
+/nbropject
+manifest.mf

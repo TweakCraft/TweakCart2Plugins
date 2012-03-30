@@ -46,6 +46,102 @@ public class ItemParser {
         public static final int size = values().length;
     }
 
+        /*
+     * The grammar of this function is:
+     * RawLine = !TCLine || TCLine
+     * TCLine = ItemRangeAmount || ItemRangeAmount:ItemRangeAmount
+     * ItemRangeAmount = ItemRange@Amount || ItemRange
+     * ItemRange = Item-Item || Item
+     * Item = ID;Data || ID
+     * ID = int
+     * Data = int
+     * Amount = int
+     */
+    public static IntMap parseLineSplit(String line, Direction d, IntMap map){
+        boolean isNegate = false;
+        if(line.length() > 0){
+            if(line.charAt(0) == ItemCharacter.NEGATE.getCharacter()){
+                isNegate = true;
+                line = line.substring(1);
+            }
+        }
+        
+        String[] TCexpSplit = line.split("" + ItemCharacter.DELIMITER.getCharacter());
+        
+        for(String exp : TCexpSplit){
+            int amount = Integer.MAX_VALUE;
+            boolean range = false;
+            int[] itemFrom = null;
+            int[] itemTo = null;
+            
+            String[] itemAmount = exp.split("" + ItemCharacter.AMOUNT.getCharacter());
+            if(itemAmount.length == 2){
+                try{
+                    amount = Integer.parseInt(itemAmount[1]);
+                }catch(NumberFormatException ex){
+                    //We forgive the user, simply ignoring amount here
+                }
+            }else if(itemAmount.length != 1){
+                    continue;
+            }
+            
+            String[] itemRange = itemAmount[0].split("" + ItemCharacter.RANGE.getCharacter());
+            
+            if(itemRange.length == 1){
+                itemFrom  = checkIDData(itemRange[0]);
+            }else if(itemRange.length == 2){
+                itemFrom = checkIDData(itemRange[0]);
+                itemTo = checkIDData(itemRange[1]);
+                range = true;
+            }else{
+                //User has made a range of ranges, thats not possible :(
+                continue;
+            }
+            
+            if(range && itemFrom != null && itemTo != null){
+                //Something with ranges
+                if(isNegate){
+                    amount = 0;
+                }
+                map.setRange(itemFrom[0], (byte)itemFrom[1], itemTo[0], (byte)itemTo[1], amount);
+                
+            }else if(itemFrom != null){
+                //Something without ranges
+                if(isNegate){
+                    amount = 0;
+                }
+                map.setInt(itemFrom[0], (byte) (itemFrom[1]), amount);
+            }
+            
+            
+            
+        }
+        return map;
+    }
+    
+    private static int[] checkIDData(String line) {
+        int[] result = new int[2];
+        String[] linesplit = line.split("" + ItemCharacter.DATA_VALUE.getCharacter());
+        if (linesplit.length == 2) {
+            try {
+                result[0] = Integer.parseInt(linesplit[0]);
+                result[1] = Integer.parseInt(linesplit[1]);
+            } catch (NumberFormatException e) {
+
+            }
+        } else if (linesplit.length == 1) {
+            try {
+                result[0] = Integer.parseInt(linesplit[0]);
+                result[1] = -1;
+            } catch (NumberFormatException e) {
+
+            }
+        }
+
+        return result;
+
+    }
+    
     //TODO: optimize, don't use .toLowerCase() too often...
     public static IntMap parseLine(String line, Direction d, IntMap map) {
         //The String 'line' shouldn't contain any directions anymore.
