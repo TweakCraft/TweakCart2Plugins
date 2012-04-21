@@ -31,9 +31,9 @@ public enum ItemCharacter {
     DATA_VALUE(';'),
     DIGIT(' ');
 
-    private char character;
-    private int priority;
-    private static ItemCharacter[] itemParserPriorityArray;
+    private final char character;
+    private final int priority;
+    private static final ItemCharacter[] itemParserPriorityArray;
 
     static {
         itemParserPriorityArray = new ItemCharacter[values().length];

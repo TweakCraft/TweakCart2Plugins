@@ -18,10 +18,13 @@
 
 package net.tweakcraft.tweakcart.cartstorage;
 
+import net.tweakcraft.tweakcart.TweakCart;
 import net.tweakcraft.tweakcart.api.event.TweakVehiclePassesSignEvent;
 import net.tweakcraft.tweakcart.api.event.listeners.TweakSignEventListener;
 import net.tweakcraft.tweakcart.api.model.TweakCartEvent;
 import net.tweakcraft.tweakcart.api.model.TweakCartPlugin;
+import net.tweakcraft.tweakcart.cartstorage.parser.ItemParser;
+import net.tweakcraft.tweakcart.cartstorage.parser.ParseException;
 import net.tweakcraft.tweakcart.model.IntMap;
 import net.tweakcraft.tweakcart.util.ChestUtil;
 import net.tweakcraft.tweakcart.util.InventoryManager;
@@ -33,7 +36,6 @@ import org.bukkit.inventory.Inventory;
 import java.util.List;
 
 public class CartStorage extends TweakCartPlugin {
-    CartStorageEventListener eventListener = new CartStorageEventListener();
 
     @Override
     public String getPluginName() {
@@ -42,7 +44,7 @@ public class CartStorage extends TweakCartPlugin {
 
     @Override
     public void registerEvents(TweakPluginManager pluginManager) {
-        pluginManager.registerEvent(eventListener, TweakCartEvent.Sign.VehiclePassesSignEvent, "collect items", "deposit items");
+        pluginManager.registerEvent(new CartStorageEventListener(), TweakCartEvent.Sign.VehiclePassesSignEvent, "collect items", "deposit items");
     }
 
     /**
@@ -53,15 +55,15 @@ public class CartStorage extends TweakCartPlugin {
     public static class CartStorageEventListener extends TweakSignEventListener {
         @Override
         public void onSignPass(TweakVehiclePassesSignEvent event) {
-            System.out.println("Hai");
+            if(event.getSign().getBlock().isBlockPowered() || event.getSign().getBlock().isBlockIndirectlyPowered())
+                return;
             if (event.getMinecart() instanceof StorageMinecart) {
                 StorageMinecart storageMinecart = (StorageMinecart) event.getMinecart();
                 Inventory cartInventory = storageMinecart.getInventory();
-                IntMap[] maps = ItemParser.parseSign(event.getSign(), event.getDirection());
-                if (maps != null) {
+                try {
+                    IntMap[] maps = ItemParser.parseSign(event.getSign(), event.getDirection());
                     List<Chest> chestList = ChestUtil.getChestsAroundBlock(event.getSign().getBlock(), 1);
                     for (Chest c : chestList) {
-                        System.out.println(c.getLocation());
                         InventoryManager.moveContainerContents(cartInventory, c.getInventory(), maps);
                         /**
                          * TODO: we still have to do something with the return data of this function. For example,
@@ -70,8 +72,8 @@ public class CartStorage extends TweakCartPlugin {
                          * in some situations.
                          */
                     }
-                } else{
-                    System.out.println("Map is null!");
+                } catch (ParseException e) {
+                    TweakCart.log("There was a syntax error on the sign @{x=" + event.getSign().getX() + ", z=" + event.getSign().getZ() + ", y=" + event.getSign().getY() + "}; " + e.getMessage());
                 }
             }
         }

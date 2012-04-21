@@ -18,6 +18,7 @@
 
 package net.tweakcraft.tweakcart.debug;
 
+import net.tweakcraft.tweakcart.TweakCart;
 import net.tweakcraft.tweakcart.api.event.*;
 import net.tweakcraft.tweakcart.api.event.listeners.TweakBlockEventListener;
 import net.tweakcraft.tweakcart.api.event.listeners.TweakSignEventListener;
@@ -47,15 +48,16 @@ public class Debug extends TweakCartPlugin {
     private DebugSignListener signListener = new DebugSignListener();
     private DebugSignKeywordListener signKeywordListener = new DebugSignKeywordListener();
     private DebugPermissionsHandler debugPermissionsHandler = new DebugPermissionsHandler();
-    
+
     @Override
     public void onEnable() {
         super.onEnable();
-        
+
         PluginManager pm = Bukkit.getPluginManager();
-        
+
         pm.registerEvents(blockListener, this);
     }
+
     @Override
     public String getPluginName() {
         return "Debug";
@@ -63,18 +65,21 @@ public class Debug extends TweakCartPlugin {
 
     @Override
     public void registerEvents(TweakPluginManager pluginManager) {
-        pluginManager.registerEvent(blockListener, TweakCartEvent.Block.values());
-        for (TweakCartEvent.Sign signEvent : TweakCartEvent.Sign.values()) {
-            pluginManager.registerEvent(signListener, signEvent);
-            pluginManager.registerEvent(signKeywordListener, signEvent, "a");
+        if (TweakCart.DEBUG) {
+            pluginManager.registerEvent(blockListener, TweakCartEvent.Block.values());
+            for (TweakCartEvent.Sign signEvent : TweakCartEvent.Sign.values()) {
+                pluginManager.registerEvent(signListener, signEvent);
+                pluginManager.registerEvent(signKeywordListener, signEvent, "a");
+            }
+            TweakPermissionsManager.getInstance().addHandler(debugPermissionsHandler);
         }
-        TweakPermissionsManager.getInstance().addHandler(debugPermissionsHandler);
     }
 
-    public class DebugBlockListener extends TweakBlockEventListener implements Listener{
+    public class DebugBlockListener extends TweakBlockEventListener implements Listener {
 
         public void onVehicleBlockChange(TweakVehicleBlockChangeEvent event) {
             Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "VehicleBlockChange event thrown");
+            Bukkit.getServer().broadcastMessage(ChatColor.BLUE + "Data: " + event.getBlock().getType().name());
         }
 
         public void onVehicleBlockCollision(TweakVehicleBlockCollisionEvent event) {
@@ -86,10 +91,10 @@ public class Debug extends TweakCartPlugin {
             Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "VehicleBlockDetect event thrown");
             Bukkit.getServer().broadcastMessage(ChatColor.BLUE + "Data: " + event.getBlock().getType().name());
         }
-        
+
         @EventHandler
-        public void onVehicleDestroy(VehicleDestroyEvent ev){
-            if(ev.getVehicle() instanceof StorageMinecart){
+        public void onVehicleDestroy(VehicleDestroyEvent ev) {
+            if (ev.getVehicle() instanceof StorageMinecart) {
                 ev.getVehicle().getWorld().dropItem(ev.getVehicle().getLocation(), new ItemStack(Material.STORAGE_MINECART, 1));
                 ev.getVehicle().remove();
                 ev.setCancelled(true);
