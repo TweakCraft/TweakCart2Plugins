@@ -95,6 +95,12 @@ public class Debug extends TweakCartPlugin {
         @EventHandler
         public void onVehicleDestroy(VehicleDestroyEvent ev) {
             if (ev.getVehicle() instanceof StorageMinecart) {
+                ItemStack[] leftovers = ((StorageMinecart) ev.getVehicle()).getInventory().getContents();
+                for(ItemStack is : leftovers) {
+                    if(is!=null)
+                        ((StorageMinecart) ev.getVehicle()).getWorld().dropItemNaturally(((StorageMinecart) ev.getVehicle()).getLocation(), is);
+                }
+
                 ev.getVehicle().getWorld().dropItem(ev.getVehicle().getLocation(), new ItemStack(Material.STORAGE_MINECART, 1));
                 ev.getVehicle().remove();
                 ev.setCancelled(true);
