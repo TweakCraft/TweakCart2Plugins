@@ -15,12 +15,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-
 package net.tweakcraft.tweakcart.cartstorage.parser;
+
+import java.util.Arrays;
 
 import net.tweakcraft.tweakcart.TweakCart;
 import net.tweakcraft.tweakcart.api.model.parser.DirectionParser;
+import net.tweakcraft.tweakcart.cartstorage.CartStorage;
 import net.tweakcraft.tweakcart.cartstorage.model.Action;
+import net.tweakcraft.tweakcart.cartstorage.parser.ItemCharacter;
 import net.tweakcraft.tweakcart.model.Direction;
 import net.tweakcraft.tweakcart.model.IntMap;
 import net.tweakcraft.tweakcart.util.StringUtil;
@@ -34,9 +37,6 @@ import java.util.logging.Level;
  * @author Edoxile
  */
 public class ItemParser {
-
-    private static IntMap[] maps = new IntMap[]{new IntMap(), new IntMap()};
-
     //TODO: rename this. It's supposed to make the int[] allocation easier/more maintainable.
     private enum DataType {
         START_ID,
@@ -44,24 +44,115 @@ public class ItemParser {
         END_ID,
         END_DATA,
         AMOUNT;
-
         public static final int size = values().length;
     }
 
+    /*
+      * The grammar of this function is: RawLine = !TCLine || TCLine TCLine =
+      * ItemRangeAmount || ItemRangeAmount:ItemRangeAmount ItemRangeAmount =
+      * ItemRange@Amount || ItemRange ItemRange = Item-Item || Item Item =
+      * ID;Data || ID ID = int Data = int Amount = int
+      */
+    public static IntMap parseLineSplit(String line, Direction d, IntMap map) {
+        boolean isNegate = false;
+        if (line.length() > 0) {
+            if (line.charAt(0) == ItemCharacter.NEGATE.getCharacter()) {
+                isNegate = true;
+                line = line.substring(1);
+            }
+        }
+
+        String[] TCexpSplit = line.split("" + ItemCharacter.DELIMITER.getCharacter());
+
+        for (String exp : TCexpSplit) {
+            int amount = Integer.MAX_VALUE;
+            boolean range = false;
+            int[] itemFrom = null;
+            int[] itemTo = null;
+
+            String[] itemAmount = exp.split("" + ItemCharacter.AMOUNT.getCharacter());
+            if (itemAmount.length == 2) {
+                try {
+                    amount = Integer.parseInt(itemAmount[1]);
+                } catch (NumberFormatException ex) {
+                    //We forgive the user, simply ignoring amount here
+                }
+            } else if (itemAmount.length != 1) {
+                continue;
+            }
+
+            String[] itemRange = itemAmount[0].split("" + ItemCharacter.RANGE.getCharacter());
+
+            if (itemRange.length == 1) {
+                itemFrom = checkIDData(itemRange[0]);
+            } else if (itemRange.length == 2) {
+                itemFrom = checkIDData(itemRange[0]);
+                itemTo = checkIDData(itemRange[1]);
+                range = true;
+            } else {
+                //User has made a range of ranges, thats not possible :(
+                continue;
+            }
+
+            if (range && itemFrom != null && itemTo != null) {
+                //Something with ranges
+                if (isNegate) {
+                    amount = 0;
+                }
+                map.setRange(itemFrom[0], (byte) itemFrom[1], itemTo[0], (byte) itemTo[1], amount);
+
+            } else if (itemFrom != null) {
+                //Something without ranges
+                if (isNegate) {
+                    amount = 0;
+                }
+                map.setInt(itemFrom[0], (byte) (itemFrom[1]), amount);
+            }
+
+
+        }
+        return map;
+    }
+
+    private static int[] checkIDData(String line) {
+        int[] result = new int[2];
+        String[] linesplit = line.split("" + ItemCharacter.DATA_VALUE.getCharacter());
+        if (linesplit.length == 2) {
+            try {
+                result[0] = Integer.parseInt(linesplit[0]);
+                result[1] = Integer.parseInt(linesplit[1]);
+            } catch (NumberFormatException e) {
+            }
+        } else if (linesplit.length == 1) {
+            try {
+                result[0] = Integer.parseInt(linesplit[0]);
+                result[1] = -1;
+            } catch (NumberFormatException e) {
+            }
+        }
+
+        return result;
+
+    }
+
     //TODO: optimize, don't use .toLowerCase() too often...
-    public static IntMap parseLine(String line, IntMap map) throws ParseException {
+    public static IntMap parseLine(String line, Direction d, IntMap map) {
         //The String 'line' shouldn't contain any directions anymore.
         line += ":";
         boolean isNegate = line.charAt(0) == ItemCharacter.NEGATE.getCharacter();
         if (isNegate) {
             line = line.substring(1);
         }
-        String[] numbers = new String[]{"", "", "", "", ""};
+        String[] numbers = new String[]
+            {
+                "", "", "", "", ""
+            };
         int[] ints = new int[DataType.size];
         ItemCharacter lastChar = null;
         boolean range = false;
         for (char character : line.toCharArray()) {
             ItemCharacter newChar = ItemCharacter.getItemParseCharacter(character);
+            if (newChar == null) return null;
             switch (newChar) {
                 case DIGIT:
                     if (!range && lastChar == null) {
@@ -78,7 +169,7 @@ public class ItemParser {
                     break;
                 case RANGE:
                     if (range) {
-                        throw new ParseException(line);
+                        return null;
                     } else {
                         range = true;
                         lastChar = null;
@@ -91,8 +182,9 @@ public class ItemParser {
                 case DELIMITER:
                     try {
                         for (int index = 0; index < numbers.length; index++) {
-                            if (numbers[index].length() == 0)
+                            if (numbers[index].length() == 0) {
                                 numbers[index] = "0";
+                            }
                         }
                         ints[DataType.START_ID.ordinal()] = Integer.parseInt(numbers[DataType.START_ID.ordinal()]);
                         ints[DataType.START_DATA.ordinal()] = Integer.parseInt(numbers[DataType.START_DATA.ordinal()]);
@@ -102,8 +194,8 @@ public class ItemParser {
                         }
                         ints[DataType.AMOUNT.ordinal()] = Integer.parseInt(numbers[DataType.AMOUNT.ordinal()]);
                     } catch (NumberFormatException e) {
-                        if (TweakCart.DEBUG) {
-                            TweakCart.log("[Debug] NFE thrown: " + e.getMessage(), Level.WARNING);
+                        if (CartStorage.DEBUG) {
+                            TweakCart.log("NFE thrown: " + e.getMessage(), Level.WARNING);
                         }
                     }
 
@@ -114,52 +206,63 @@ public class ItemParser {
                     }
 
                     if (range) {
-                        map.setRange(
-                                ints[DataType.START_ID.ordinal()],
-                                (byte) ints[DataType.START_DATA.ordinal()],
-                                ints[DataType.END_ID.ordinal()],
-                                (byte) ints[DataType.END_DATA.ordinal()],
-                                ints[DataType.AMOUNT.ordinal()]
-                        );
+                        boolean succeed = map.setRange(
+                            ints[DataType.START_ID.ordinal()],
+                            (byte) ints[DataType.START_DATA.ordinal()],
+                            ints[DataType.END_ID.ordinal()],
+                            (byte) ints[DataType.END_DATA.ordinal()],
+                            ints[DataType.AMOUNT.ordinal()]);
                     } else {
                         map.setInt(
-                                ints[DataType.START_ID.ordinal()],
-                                (byte) ints[DataType.START_DATA.ordinal()],
-                                ints[DataType.AMOUNT.ordinal()]
-                        );
+                            ints[DataType.START_ID.ordinal()],
+                            (byte) ints[DataType.START_DATA.ordinal()],
+                            ints[DataType.AMOUNT.ordinal()]);
                     }
 
                     ints = new int[DataType.size];
-                    numbers = new String[]{"", "", "", "", ""};
+                    numbers = new String[]
+                        {
+                            "", "", "", "", ""
+                        };
                     lastChar = null;
                     range = false;
                     break;
                 default:
                     //Syntax error
-                    throw new ParseException(line);
+                    return null;
             }
         }
         return map;
     }
 
-    public static IntMap[] parseSign(Sign sign, Direction direction) throws ParseException {
+    public static IntMap[] parseSign(Sign sign, Direction direction) {
         Action oldAction = Action.NULL;
-        recycle();
+        IntMap[] maps = new IntMap[]
+            {
+                new IntMap(), new IntMap()
+            };
         for (String line : sign.getLines()) {
             Direction requiredDirection = DirectionParser.parseDirection(line);
             if (requiredDirection == Direction.SELF || requiredDirection == direction) {
-                if (requiredDirection != Direction.SELF)
-                    line = DirectionParser.removeDirection(line);
+                line = DirectionParser.removeDirection(line);
                 Action newAction = parseAction(StringUtil.stripBrackets(line));
                 switch (newAction) {
                     case ALL:
                         if (oldAction != Action.NULL) {
                             maps[oldAction.ordinal()].fillAll();
+                            if (maps[oldAction.ordinal()] == null) {
+                                //Syntax error, stop with map-building
+                                return null;
+                            }
                         }
                         break;
                     case ITEM:
                         if (oldAction != Action.NULL) {
-                            maps[oldAction.ordinal()] = parseLine(line, maps[oldAction.ordinal()]);
+                            maps[oldAction.ordinal()] = parseLine(line, direction, maps[oldAction.ordinal()]);
+                            if (maps[oldAction.ordinal()] == null) {
+                                //Syntax error, stop with map-building
+                                return null;
+                            }
                         }
                         break;
                     case COLLECT:
@@ -230,10 +333,5 @@ public class ItemParser {
         } else {
             return Action.NULL;
         }
-    }
-
-    private static void recycle() {
-        maps[0].clear();
-        maps[1].clear();
     }
 }

@@ -70,6 +70,8 @@ public enum ItemCharacter {
         switch (tjar) {
             case '!':
                 return NEGATE;
+            case '|':
+            case ',':
             case ':':
                 return DELIMITER;
             case '@':

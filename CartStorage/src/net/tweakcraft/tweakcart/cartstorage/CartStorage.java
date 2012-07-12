@@ -15,27 +15,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-
 package net.tweakcraft.tweakcart.cartstorage;
+
+import java.util.Arrays;
+import java.util.List;
 
 import net.tweakcraft.tweakcart.TweakCart;
 import net.tweakcraft.tweakcart.api.event.TweakVehiclePassesSignEvent;
 import net.tweakcraft.tweakcart.api.event.listeners.TweakSignEventListener;
 import net.tweakcraft.tweakcart.api.model.TweakCartEvent;
 import net.tweakcraft.tweakcart.api.model.TweakCartPlugin;
-import net.tweakcraft.tweakcart.cartstorage.parser.ItemParser;
 import net.tweakcraft.tweakcart.cartstorage.parser.ParseException;
+import net.tweakcraft.tweakcart.cartstorage.test.TestCartStorage;
 import net.tweakcraft.tweakcart.model.IntMap;
 import net.tweakcraft.tweakcart.util.ChestUtil;
 import net.tweakcraft.tweakcart.util.InventoryManager;
 import net.tweakcraft.tweakcart.util.TweakPluginManager;
 import org.bukkit.block.Chest;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.StorageMinecart;
 import org.bukkit.inventory.Inventory;
 
-import java.util.List;
-
 public class CartStorage extends TweakCartPlugin {
+    public static boolean TEST = true;
+    public static boolean DEBUG;
 
     @Override
     public String getPluginName() {
@@ -44,37 +47,48 @@ public class CartStorage extends TweakCartPlugin {
 
     @Override
     public void registerEvents(TweakPluginManager pluginManager) {
+        /* if (CartStorage.TEST)
+          {
+              TestCartStorage test = new TestCartStorage((CraftServer) getServer(), new CartStorageEventListener());
+              test.testAll();
+          } */
         pluginManager.registerEvent(new CartStorageEventListener(), TweakCartEvent.Sign.VehiclePassesSignEvent, "collect items", "deposit items");
     }
 
-    /**
-     * Created by IntelliJ IDEA.
-     *
-     * @author Edoxile
-     */
     public static class CartStorageEventListener extends TweakSignEventListener {
         @Override
         public void onSignPass(TweakVehiclePassesSignEvent event) {
-            if(event.getSign().getBlock().isBlockPowered() || event.getSign().getBlock().isBlockIndirectlyPowered())
+            if (event.getSign().getBlock().isBlockPowered() || event.getSign().getBlock().isBlockIndirectlyPowered()) {
                 return;
+            }
             if (event.getMinecart() instanceof StorageMinecart) {
                 StorageMinecart storageMinecart = (StorageMinecart) event.getMinecart();
                 Inventory cartInventory = storageMinecart.getInventory();
-                try {
-                    IntMap[] maps = ItemParser.parseSign(event.getSign(), event.getDirection());
-                    List<Chest> chestList = ChestUtil.getChestsAroundBlock(event.getSign().getBlock(), 1);
-                    for (Chest c : chestList) {
-                        InventoryManager.moveContainerContents(cartInventory, c.getInventory(), maps);
-                        /**
-                         * TODO: we still have to do something with the return data of this function. For example,
-                         * if the cart is empty, we can omit the storing in chests for at least one round. Also,
-                         * we should explain to the people which comes first, collect or deposit. It is of importance
-                         * in some situations.
-                         */
-                    }
-                } catch (ParseException e) {
-                    TweakCart.log("There was a syntax error on the sign @{x=" + event.getSign().getX() + ", z=" + event.getSign().getZ() + ", y=" + event.getSign().getY() + "}; " + e.getMessage());
+                //try
+                //{
+                IntMap[] maps = net.tweakcraft.tweakcart.cartstorage.parser.ItemParser.parseSign(event.getSign(), event.getDirection());
+                List<Chest> chestList = ChestUtil.getChestsAroundBlock(event.getSign().getBlock(), 1);
+                if(maps == null)
+                    System.out.println("Maps was null? Check sign at "+event.getSign().getBlock().getLocation());
+                for (Chest c : chestList) {
+                    InventoryManager.moveContainerContents(cartInventory, c.getInventory(), maps);
+                    /**
+                     * TODO: we still have to do something with the return data
+                     * of this function. For example, if the cart is empty, we
+                     * can omit the storing in chests for at least one round.
+                     * Also, we should explain to the people which comes first,
+                     * collect or deposit. It is of importance in some
+                     * situations.
+                     */
                 }
+                //}
+                /*
+                * catch (ParseException e) { TweakCart.log("There was a syntax
+                * error on the sign @{x=" + event.getSign().getX() + ", z=" +
+                * event.getSign().getZ() + ", y=" + event.getSign().getY() +
+                * "}; " + e.getMessage());
+               }
+                */
             }
         }
     }
