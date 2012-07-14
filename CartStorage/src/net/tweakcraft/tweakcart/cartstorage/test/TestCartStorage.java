@@ -67,12 +67,25 @@ public class TestCartStorage {
     }
 
     public void testAll() {
+		/*cartInv,chestInv,resCartInv,resChestInv*/
         try {
-            System.out.println(this.testCase(
+            /*System.out.println(this.testCase(
                 "collect items|all items",
                 "7:64|5:64||7:64;5:64"
             ));
-        } catch (MalformedInvContentException MIE) {
+            System.out.println(this.testCase(
+                "collect items|35",
+                "35:64|5:64||35:64;5:64"
+            ));*/
+            /*System.out.println(this.testCase(
+                "collect items|7@32",
+                "7:64|5:64|7:32|7:32;5:64"
+            ));*/
+            System.out.println(this.testCase(
+                "collect items|1-10|!5",
+                "7:64;5:64;3:32||5:64|7:64;3:32"
+            ));
+		} catch (MalformedInvContentException MIE) {
             System.out.println("Malformed case:" + MIE.getError());
         } catch (Exception e) {
             e.printStackTrace();
@@ -118,7 +131,7 @@ public class TestCartStorage {
             }
         }
         return this.testCase(
-            "collect items|all items",
+            caseSign,
             invStacks[0],
             invStacks[1],
             invStacks[2],
@@ -153,6 +166,14 @@ public class TestCartStorage {
         ItemStack[] chestStacks = chest.getInventory().getContents();
 
         TweakCartInventoryTest invTest = new TweakCartInventoryTest();
-        return (invTest.compareInventories(cartStacks, resCartInv) && invTest.compareInventories(chestStacks, resChestInv));
+		System.out.println("Cart-predicted");
+		invTest.printFormatted(resCartInv);
+		System.out.println("Cart-actual");
+		invTest.printFormatted(cartStacks);
+		System.out.println("chest-predicted");
+		invTest.printFormatted(resChestInv);
+ 		System.out.println("chest-actual");
+		invTest.printFormatted(chestStacks);
+       return (invTest.compareInventories(cartStacks, resCartInv) && invTest.compareInventories(chestStacks, resChestInv));
     }
 }

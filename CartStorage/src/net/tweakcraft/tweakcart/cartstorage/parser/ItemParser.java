@@ -169,6 +169,7 @@ public class ItemParser {
                     break;
                 case RANGE:
                     if (range) {
+						System.err.println("range");
                         return null;
                     } else {
                         range = true;
@@ -228,6 +229,7 @@ public class ItemParser {
                     range = false;
                     break;
                 default:
+					System.err.println("erroor" + newChar);
                     //Syntax error
                     return null;
             }
@@ -252,6 +254,7 @@ public class ItemParser {
                             maps[oldAction.ordinal()].fillAll();
                             if (maps[oldAction.ordinal()] == null) {
                                 //Syntax error, stop with map-building
+								System.err.println("syntax error 1");
                                 return null;
                             }
                         }
@@ -261,6 +264,7 @@ public class ItemParser {
                             maps[oldAction.ordinal()] = parseLine(line, direction, maps[oldAction.ordinal()]);
                             if (maps[oldAction.ordinal()] == null) {
                                 //Syntax error, stop with map-building
+								System.err.println("syntax error 2");
                                 return null;
                             }
                         }
