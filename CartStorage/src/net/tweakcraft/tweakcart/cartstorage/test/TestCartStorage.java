@@ -8,6 +8,7 @@ import net.minecraft.server.WorldServer;
 import net.tweakcraft.tweakcart.api.event.TweakVehiclePassesSignEvent;
 import net.tweakcraft.tweakcart.cartstorage.CartStorage;
 import net.tweakcraft.tweakcart.model.Direction;
+import net.tweakcraft.tweakcart.model.IntMap;
 import net.tweakcraft.tweakcart.test.TweakCartInventoryTest;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -66,24 +67,28 @@ public class TestCartStorage {
         this.eventListener = eventListener;
     }
 
-    public void testAll() {
-		/*cartInv,chestInv,resCartInv,resChestInv*/
+    public void testAll() 
+	{
         try {
-            /*System.out.println(this.testCase(
+            System.out.println("== TestResult ==== " + this.testCase(
                 "collect items|all items",
                 "7:64|5:64||7:64;5:64"
             ));
-            System.out.println(this.testCase(
+            System.out.println("== TestResult ==== " + this.testCase(
                 "collect items|35",
                 "35:64|5:64||35:64;5:64"
-            ));*/
-            /*System.out.println(this.testCase(
+            ));
+            System.out.println("== TestResult ==== " + this.testCase(
                 "collect items|7@32",
                 "7:64|5:64|7:32|7:32;5:64"
-            ));*/
-            System.out.println(this.testCase(
+            ));
+            System.out.println("== TestResult ==== " + this.testCase(
                 "collect items|1-10|!5",
                 "7:64;5:64;3:32||5:64|7:64;3:32"
+            ));
+			System.out.println("== TestResult ==== " + this.testCase(
+                "collect items|all items",
+                "342:64;2265:64|||342:64;2265:64"
             ));
 		} catch (MalformedInvContentException MIE) {
             System.out.println("Malformed case:" + MIE.getError());

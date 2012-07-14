@@ -68,7 +68,8 @@ public class CartStorage extends TweakCartPlugin {
                 //try
                 //{
                 IntMap[] maps = net.tweakcraft.tweakcart.cartstorage.parser.ItemParser.parseSign(event.getSign(), event.getDirection());
-                List<Chest> chestList = ChestUtil.getChestsAroundBlock(event.getSign().getBlock(), 1);
+                //System.out.println(maps[0]);
+				List<Chest> chestList = ChestUtil.getChestsAroundBlock(event.getSign().getBlock(), 1);
                 if(maps == null)
                     System.out.println("Maps was null? Check sign at "+event.getSign().getBlock().getLocation());
                 for (Chest c : chestList) {
