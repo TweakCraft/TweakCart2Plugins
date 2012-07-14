@@ -37,7 +37,7 @@ import org.bukkit.entity.StorageMinecart;
 import org.bukkit.inventory.Inventory;
 
 public class CartStorage extends TweakCartPlugin {
-    public static boolean TEST = true;
+    public static boolean TEST = false;
     public static boolean DEBUG;
 
     @Override
@@ -47,11 +47,12 @@ public class CartStorage extends TweakCartPlugin {
 
     @Override
     public void registerEvents(TweakPluginManager pluginManager) {
-        /* if (CartStorage.TEST)
+        if (CartStorage.TEST)
           {
+			  System.out.println("Running");
               TestCartStorage test = new TestCartStorage((CraftServer) getServer(), new CartStorageEventListener());
               test.testAll();
-          } */
+          }
         pluginManager.registerEvent(new CartStorageEventListener(), TweakCartEvent.Sign.VehiclePassesSignEvent, "collect items", "deposit items");
     }
 
@@ -67,7 +68,8 @@ public class CartStorage extends TweakCartPlugin {
                 //try
                 //{
                 IntMap[] maps = net.tweakcraft.tweakcart.cartstorage.parser.ItemParser.parseSign(event.getSign(), event.getDirection());
-                List<Chest> chestList = ChestUtil.getChestsAroundBlock(event.getSign().getBlock(), 1);
+                //System.out.println(maps[0]);
+				List<Chest> chestList = ChestUtil.getChestsAroundBlock(event.getSign().getBlock(), 1);
                 if(maps == null)
                     System.out.println("Maps was null? Check sign at "+event.getSign().getBlock().getLocation());
                 for (Chest c : chestList) {
