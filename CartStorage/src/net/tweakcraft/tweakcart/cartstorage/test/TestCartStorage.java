@@ -69,16 +69,49 @@ public class TestCartStorage {
 
     public void testAll() 
 	{
-        try {
-            System.out.println("== TestResult ==== " + this.testCase(
+        try 
+		{
+            /*System.out.println("== TestResult ==== " + this.testCase(
                 "collect items|all items",
                 "7:64|5:64||7:64;5:64"
             ));
-            System.out.println("== TestResult ==== " + this.testCase(
-                "collect items|35",
-                "35:64|5:64||35:64;5:64"
+			System.out.println("== TestResult ==== " + this.testCase(
+                "collect items|1-10,!2,!3|35;15@10",
+                "1:64|1:64|1:64|1:64"
             ));
             System.out.println("== TestResult ==== " + this.testCase(
+                "collect items|92,281,282,295-|297,319,320,322|Food",
+                "1:64|1:64|1:64|1:64"
+            ));
+            System.out.println("== TestResult ==== " + this.testCase(
+                "collect items|all items@10",
+                "1:64|1:64|1:64|1:64"
+            ));
+			System.out.println("== TestResult ==== " + this.testCase(
+                "collect items|all items@10:20",
+                "1:64|1:64|1:64|1:64"
+            ));
+			System.out.println("== TestResult ==== " + this.testCase(
+                "collect items|20@20||b20 glas per",
+                "20:64||20:44|20:20"
+            ));
+			System.out.println("== TestResult ==== " + this.testCase(
+                "collect items|34-36",
+                "35:64|5:64||35:64;5:64"
+            ));
+			System.out.println("== TestResult ==== " + this.testCase(
+                "collect items|35",
+                "35:64|5:64||35:64;5:64"
+            ));*/
+			System.out.println("== TestResult ==== " + this.testCase(
+                "collect items|5",
+                "5:64|35:64||35:64;5:64"
+            ));
+ 			/*System.out.println("== TestResult ==== " + this.testCase(
+                "collect items|35;4",
+                "35:64|5:64||35:64;5:64"
+            ));
+			System.out.println("== TestResult ==== " + this.testCase(
                 "collect items|7@32",
                 "7:64|5:64|7:32|7:32;5:64"
             ));
@@ -89,12 +122,16 @@ public class TestCartStorage {
 			System.out.println("== TestResult ==== " + this.testCase(
                 "collect items|all items",
                 "342:64;2265:64|||342:64;2265:64"
-            ));
-		} catch (MalformedInvContentException MIE) {
-            System.out.println("Malformed case:" + MIE.getError());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            ));*/
+		}
+		catch (MalformedInvContentException MIE)
+		{
+			System.out.println("Malformed case:" + MIE.getError());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
     }
 
     public boolean testCase(String caseSign, String... content) throws Exception {
@@ -135,6 +172,7 @@ public class TestCartStorage {
                 invStacks[s] = new ItemStack[0];
             }
         }
+		System.out.println(caseSign);
         return this.testCase(
             caseSign,
             invStacks[0],
