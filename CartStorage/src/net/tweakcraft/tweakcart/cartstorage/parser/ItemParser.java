@@ -138,10 +138,13 @@ public class ItemParser {
 	{
 		//The String 'line' shouldn't contain any directions anymore.
 		line += ":";
-		boolean isNegate = line.charAt(0) == ItemCharacter.NEGATE.getCharacter();
-		if (isNegate)
+		/* if negate char is @ start of the line we need to negate the hole line, if not negate will only do a single item */
+		boolean isNegate = false;
+		boolean isNegateAtStart = line.charAt(0) == ItemCharacter.NEGATE.getCharacter();	
+		if (isNegateAtStart)
 		{
 			line = line.substring(1);
+			isNegate = true;
 		}
 		String[] numbers = new String[]
 		{
@@ -267,8 +270,11 @@ public class ItemParser {
 								(byte) ints[DataType.START_DATA.ordinal()],
 								ints[DataType.AMOUNT.ordinal()]);
 					}
-					/* reset negate */
-					isNegate = false;
+					/* Only reset negate if negate wasnt detected @ start*/
+					if(!isNegateAtStart)
+					{
+						isNegate = false;
+					}
 					
 					ints = new int[DataType.size];
 					numbers = new String[]
