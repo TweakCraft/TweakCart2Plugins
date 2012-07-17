@@ -71,26 +71,26 @@ public class TestCartStorage {
 	{
         try 
 		{
-            /*System.out.println("== TestResult ==== " + this.testCase(
+            System.out.println("== TestResult ==== " + this.testCase(
                 "collect items|all items",
                 "7:64|5:64||7:64;5:64"
             ));
-			System.out.println("== TestResult ==== " + this.testCase(
+			this.testCase(
                 "collect items|1-10,!2,!3|35;15@10",
                 "1:64|1:64|1:64|1:64"
-            ));
-            System.out.println("== TestResult ==== " + this.testCase(
+            );
+            this.testCase(
                 "collect items|92,281,282,295-|297,319,320,322|Food",
                 "1:64|1:64|1:64|1:64"
-            ));
-            System.out.println("== TestResult ==== " + this.testCase(
+            );
+            this.testCase(
                 "collect items|all items@10",
                 "1:64|1:64|1:64|1:64"
-            ));
-			System.out.println("== TestResult ==== " + this.testCase(
+            );
+			this.testCase(
                 "collect items|all items@10:20",
                 "1:64|1:64|1:64|1:64"
-            ));
+            );
 			System.out.println("== TestResult ==== " + this.testCase(
                 "collect items|20@20||b20 glas per",
                 "20:64||20:44|20:20"
@@ -102,12 +102,12 @@ public class TestCartStorage {
 			System.out.println("== TestResult ==== " + this.testCase(
                 "collect items|35",
                 "35:64|5:64||35:64;5:64"
-            ));*/
+            ));
 			System.out.println("== TestResult ==== " + this.testCase(
                 "collect items|5",
                 "5:64|35:64||35:64;5:64"
             ));
- 			/*System.out.println("== TestResult ==== " + this.testCase(
+ 			System.out.println("== TestResult ==== " + this.testCase(
                 "collect items|35;4",
                 "35:64|5:64||35:64;5:64"
             ));
@@ -122,7 +122,7 @@ public class TestCartStorage {
 			System.out.println("== TestResult ==== " + this.testCase(
                 "collect items|all items",
                 "342:64;2265:64|||342:64;2265:64"
-            ));*/
+            ));
 		}
 		catch (MalformedInvContentException MIE)
 		{

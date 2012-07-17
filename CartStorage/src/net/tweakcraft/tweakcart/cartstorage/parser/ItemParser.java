@@ -98,14 +98,14 @@ public class ItemParser {
                 if (isNegate) {
                     amount = 0;
                 }
-                map.setRange(itemFrom[0], (byte) itemFrom[1], itemTo[0], (byte) itemTo[1], amount);
+                map.setRange(itemFrom[0], itemFrom[1], itemTo[0], itemTo[1], amount);
 
             } else if (itemFrom != null) {
                 //Something without ranges
                 if (isNegate) {
                     amount = 0;
                 }
-                map.setInt(itemFrom[0], (byte) (itemFrom[1]), amount);
+                map.setInt(itemFrom[0], itemFrom[1], amount);
             }
 
 
@@ -251,10 +251,11 @@ public class ItemParser {
 						}
 						boolean succeed = map.setRange(
 								ints[DataType.START_ID.ordinal()],
-								(byte) ints[DataType.START_DATA.ordinal()],
+								ints[DataType.START_DATA.ordinal()],
 								ints[DataType.END_ID.ordinal()],
-								(byte) ints[DataType.END_DATA.ordinal()],
-								ints[DataType.AMOUNT.ordinal()]);
+								ints[DataType.END_DATA.ordinal()],
+								ints[DataType.AMOUNT.ordinal()]
+						);
 					}
 					else
 					{
@@ -267,8 +268,9 @@ public class ItemParser {
 						}
 						map.setInt(
 								ints[DataType.START_ID.ordinal()],
-								(byte) ints[DataType.START_DATA.ordinal()],
-								ints[DataType.AMOUNT.ordinal()]);
+								ints[DataType.START_DATA.ordinal()],
+								ints[DataType.AMOUNT.ordinal()]
+						);
 					}
 					/* Only reset negate if negate wasnt detected @ start*/
 					if(!isNegateAtStart)
