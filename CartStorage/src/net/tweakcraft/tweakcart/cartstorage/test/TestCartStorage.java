@@ -46,36 +46,34 @@ public class TestCartStorage {
         EntityMinecart cart = new EntityMinecart(world, 1d, 1d, 1d, 0);
         storageCart = new CraftStorageMinecart(craftServer, cart);
 
-        /*
-           * init block
-           */
+        /**
+         * init block
+         */
         craftWorld.getBlockAt(1, 1, 1).setType(Material.SIGN_POST);
         craftWorld.getBlockAt(1, 2, 1).setType(Material.CHEST);
 
-        /*
-           * sign
-           */
+        /**
+         * sign
+         */
         Block signBlock = craftWorld.getBlockAt(1, 1, 1);
         sign = new CraftSign(signBlock);
 
-        /*
-           * chest
-           */
+        /**
+         * chest
+         */
         Block chestBlock = craftWorld.getBlockAt(1, 2, 1);
         chest = new CraftChest(chestBlock);
 
         this.eventListener = eventListener;
     }
 
-    public void testAll() 
-	{
-        try 
-		{
+    public void testAll() {
+        try {
             System.out.println("== TestResult ==== " + this.testCase(
                 "collect items|all items",
                 "7:64|5:64||7:64;5:64"
             ));
-			this.testCase(
+            this.testCase(
                 "collect items|1-10,!2,!3|35;15@10",
                 "1:64|1:64|1:64|1:64"
             );
@@ -87,31 +85,31 @@ public class TestCartStorage {
                 "collect items|all items@10",
                 "1:64|1:64|1:64|1:64"
             );
-			this.testCase(
+            this.testCase(
                 "collect items|all items@10:20",
                 "1:64|1:64|1:64|1:64"
             );
-			System.out.println("== TestResult ==== " + this.testCase(
+            System.out.println("== TestResult ==== " + this.testCase(
                 "collect items|20@20||b20 glas per",
                 "20:64||20:44|20:20"
             ));
-			System.out.println("== TestResult ==== " + this.testCase(
+            System.out.println("== TestResult ==== " + this.testCase(
                 "collect items|34-36",
                 "35:64|5:64||35:64;5:64"
             ));
-			System.out.println("== TestResult ==== " + this.testCase(
+            System.out.println("== TestResult ==== " + this.testCase(
                 "collect items|35",
                 "35:64|5:64||35:64;5:64"
             ));
-			System.out.println("== TestResult ==== " + this.testCase(
+            System.out.println("== TestResult ==== " + this.testCase(
                 "collect items|5",
                 "5:64|35:64||35:64;5:64"
             ));
- 			System.out.println("== TestResult ==== " + this.testCase(
+            System.out.println("== TestResult ==== " + this.testCase(
                 "collect items|35;4",
                 "35:64|5:64||35:64;5:64"
             ));
-			System.out.println("== TestResult ==== " + this.testCase(
+            System.out.println("== TestResult ==== " + this.testCase(
                 "collect items|7@32",
                 "7:64|5:64|7:32|7:32;5:64"
             ));
@@ -119,19 +117,15 @@ public class TestCartStorage {
                 "collect items|1-10|!5",
                 "7:64;5:64;3:32||5:64|7:64;3:32"
             ));
-			System.out.println("== TestResult ==== " + this.testCase(
+            System.out.println("== TestResult ==== " + this.testCase(
                 "collect items|all items",
                 "342:64;2265:64|||342:64;2265:64"
             ));
-		}
-		catch (MalformedInvContentException MIE)
-		{
-			System.out.println("Malformed case:" + MIE.getError());
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+        } catch (MalformedInvContentException MIE) {
+            System.out.println("Malformed case:" + MIE.getError());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean testCase(String caseSign, String... content) throws Exception {
@@ -172,7 +166,7 @@ public class TestCartStorage {
                 invStacks[s] = new ItemStack[0];
             }
         }
-		System.out.println(caseSign);
+        System.out.println(caseSign);
         return this.testCase(
             caseSign,
             invStacks[0],
@@ -209,14 +203,14 @@ public class TestCartStorage {
         ItemStack[] chestStacks = chest.getInventory().getContents();
 
         TweakCartInventoryTest invTest = new TweakCartInventoryTest();
-		System.out.println("Cart-predicted");
-		invTest.printFormatted(resCartInv);
-		System.out.println("Cart-actual");
-		invTest.printFormatted(cartStacks);
-		System.out.println("chest-predicted");
-		invTest.printFormatted(resChestInv);
- 		System.out.println("chest-actual");
-		invTest.printFormatted(chestStacks);
-       return (invTest.compareInventories(cartStacks, resCartInv) && invTest.compareInventories(chestStacks, resChestInv));
+        System.out.println("Cart-predicted");
+        invTest.printFormatted(resCartInv);
+        System.out.println("Cart-actual");
+        invTest.printFormatted(cartStacks);
+        System.out.println("chest-predicted");
+        invTest.printFormatted(resChestInv);
+        System.out.println("chest-actual");
+        invTest.printFormatted(chestStacks);
+        return (invTest.compareInventories(cartStacks, resCartInv) && invTest.compareInventories(chestStacks, resChestInv));
     }
 }

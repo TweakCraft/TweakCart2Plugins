@@ -45,16 +45,14 @@ public class CartStorage extends TweakCartPlugin {
     }
 
     @Override
-	public void registerEvents( TweakPluginManager pluginManager )
-	{
-		if (CartStorage.TEST)
-		{
-			//System.out.println("Running");
-			TestCartStorage test = new TestCartStorage((CraftServer) getServer(), new CartStorageEventListener());
-			test.testAll();
-		}
-		pluginManager.registerEvent(new CartStorageEventListener(), TweakCartEvent.Sign.VehiclePassesSignEvent, "collect items", "deposit items");
-	}
+    public void registerEvents( TweakPluginManager pluginManager ) {
+        if (CartStorage.TEST) {
+            //System.out.println("Running");
+            TestCartStorage test = new TestCartStorage((CraftServer) getServer(), new CartStorageEventListener());
+            test.testAll();
+        }
+        pluginManager.registerEvent(new CartStorageEventListener(), TweakCartEvent.Sign.VehiclePassesSignEvent, "collect items", "deposit items");
+    }
 
     public static class CartStorageEventListener extends TweakSignEventListener {
         @Override
@@ -68,13 +66,13 @@ public class CartStorage extends TweakCartPlugin {
                 //try
                 //{
                 IntMap[] maps = net.tweakcraft.tweakcart.cartstorage.parser.ItemParser.parseSign(event.getSign(), event.getDirection());
-				List<Chest> chestList = ChestUtil.getChestsAroundBlock(event.getSign().getBlock(), 1);
+                List<Chest> chestList = ChestUtil.getChestsAroundBlock(event.getSign().getBlock(), 1);
                 if(maps == null)
-				{
+                {
                     System.out.println("Maps was null? Check sign at "+event.getSign().getBlock().getLocation());
-					System.out.println(Arrays.toString(event.getSign().getLines()));
-				}
-				for (Chest c : chestList) {
+                    System.out.println(Arrays.toString(event.getSign().getLines()));
+                }
+                for (Chest c : chestList) {
                     InventoryManager.moveContainerContents(cartInventory, c.getInventory(), maps);
                     /**
                      * TODO: we still have to do something with the return data
