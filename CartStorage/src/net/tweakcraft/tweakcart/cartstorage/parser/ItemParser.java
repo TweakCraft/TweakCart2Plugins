@@ -133,120 +133,87 @@ public class ItemParser {
 
     }
 
- //TODO: optimize, don't use .toLowerCase() too often...
+    //TODO: optimize, don't use .toLowerCase() too often...
 	public static IntMap parseLine( String line, Direction d, IntMap map )
 	{
 		//The String 'line' shouldn't contain any directions anymore.
 		line += ":";
-		/* if negate char is @ start of the line we need to negate the hole line, if not negate will only do a single item */
+		/* if negate char is @ start of the line we need to negate the whole line, if not negate will only do a single item */
 		boolean isNegate = false;
 		boolean isNegateAtStart = line.charAt(0) == ItemCharacter.NEGATE.getCharacter();	
-		if (isNegateAtStart)
-		{
+		if (isNegateAtStart) {
 			line = line.substring(1);
 			isNegate = true;
 		}
-		String[] numbers = new String[]
-		{
-			"", "", "", "", ""
-		};
+		String[] numbers = new String[] { "", "", "", "", "" };
 		int[] ints = new int[DataType.size];
 		ItemCharacter lastChar = null;
 		boolean range = false;
 		for (char character : line.toCharArray())
 		{
 			ItemCharacter newChar = ItemCharacter.getItemParseCharacter(character);
-			if (newChar == null)
-			{
-				return null;
-			}
-			switch (newChar)
-			{
+			if (newChar == null) return null;
+
+			switch (newChar) {
 				case NEGATE:
 					isNegate = !isNegate;
 				break;
 				case DIGIT:
-					if (!range && lastChar == null)
-					{
+					if (!range && lastChar == null) {
 						numbers[DataType.START_ID.ordinal()] += character;
-					}
-					else if (!range && lastChar == ItemCharacter.DATA_VALUE)
-					{
-						numbers[DataType.START_DATA.ordinal()] += character;
-					}
-					else if (range && lastChar == null)
-					{
+					} else if (!range && lastChar == ItemCharacter.DATA_VALUE) {
+                        numbers[DataType.START_DATA.ordinal()] += character;
+					} else if (range && lastChar == null) {
 						numbers[DataType.END_ID.ordinal()] += character;
-					}
-					else if (range && lastChar == ItemCharacter.DATA_VALUE)
-					{
+					} else if (range && lastChar == ItemCharacter.DATA_VALUE) {
 						numbers[DataType.END_DATA.ordinal()] += character;
-					}
-					else if (lastChar == ItemCharacter.AMOUNT)
-					{
+					} else if (lastChar == ItemCharacter.AMOUNT) {
 						numbers[DataType.AMOUNT.ordinal()] += character;
 					}
 				break;
 				case RANGE:
-					if (range)
-					{
-						return null;
-					}
-					else
-					{
-						range = true;
-						lastChar = null;
-					}
+					if (range)	return null;
+
+					range = true;
+					lastChar = null;
 				break;
 				case DATA_VALUE:
 				case AMOUNT:
 					lastChar = newChar;
 				break;
 				case DELIMITER:
-					try
-					{
-						for (int index = 0; index < numbers.length; index++)
-						{
-							if (numbers[index].length() == 0)
-							{
+					try {
+						for (int index = 0; index < numbers.length; index++) {
+							if (numbers[index].length() == 0) {
 								numbers[index] = "-1";
 							}
 						}
 						ints[DataType.START_ID.ordinal()] = Integer.parseInt(numbers[DataType.START_ID.ordinal()]);
 						ints[DataType.START_DATA.ordinal()] = Integer.parseInt(numbers[DataType.START_DATA.ordinal()]);
-						if (range)
-						{
+						if (range) {
 							ints[DataType.END_ID.ordinal()] = Integer.parseInt(numbers[DataType.END_ID.ordinal()]);
 							ints[DataType.END_DATA.ordinal()] = Integer.parseInt(numbers[DataType.END_DATA.ordinal()]);
 						}
 						ints[DataType.AMOUNT.ordinal()] = Integer.parseInt(numbers[DataType.AMOUNT.ordinal()]);
-					}
-					catch (NumberFormatException e)
-					{
-						if (CartStorage.DEBUG)
-						{
+					} catch (NumberFormatException e) {
+						if (CartStorage.DEBUG) {
 							TweakCart.log("NFE thrown: " + e.getMessage(), Level.WARNING);
 						}
 					}
 
-					if (isNegate)
-					{
+					if (isNegate) {
 						ints[DataType.AMOUNT.ordinal()] = 0;
-					}
-					else if (ints[DataType.AMOUNT.ordinal()] < 1)
-					{
+					} else if (ints[DataType.AMOUNT.ordinal()] < 1)	{
 						ints[DataType.AMOUNT.ordinal()] = Integer.MAX_VALUE;
 					}
 
 
 
-					if (range)
-					{
+					if (range) {
 						/*
 						 * Faulty sign fix
 						 */
-						if (ints[DataType.START_ID.ordinal()] == -1 || ints[DataType.END_ID.ordinal()] == -1)
-						{
+						if (ints[DataType.START_ID.ordinal()] == -1 || ints[DataType.END_ID.ordinal()] == -1) {
 							continue;
 						}
 						boolean succeed = map.setRange(
@@ -256,14 +223,11 @@ public class ItemParser {
 								ints[DataType.END_DATA.ordinal()],
 								ints[DataType.AMOUNT.ordinal()]
 						);
-					}
-					else
-					{
+					} else {
 						/*
 						 * Faulty sign fix
 						 */
-						if (ints[DataType.START_ID.ordinal()] == -1)
-						{
+						if (ints[DataType.START_ID.ordinal()] == -1) {
 							continue;
 						}
 						map.setInt(
@@ -273,16 +237,12 @@ public class ItemParser {
 						);
 					}
 					/* Only reset negate if negate wasnt detected @ start*/
-					if(!isNegateAtStart)
-					{
+					if(!isNegateAtStart) {
 						isNegate = false;
 					}
 					
 					ints = new int[DataType.size];
-					numbers = new String[]
-					{
-						"", "", "", "", ""
-					};
+					numbers = new String[] { "", "", "", "", ""	};
 					lastChar = null;
 					range = false;
 				break;
@@ -296,10 +256,7 @@ public class ItemParser {
 
     public static IntMap[] parseSign(Sign sign, Direction direction) {
         Action oldAction = Action.NULL;
-        IntMap[] maps = new IntMap[]
-            {
-                new IntMap(), new IntMap()
-            };
+        IntMap[] maps = new IntMap[] { new IntMap(), new IntMap() };
         for (String line : sign.getLines()) {
             Direction requiredDirection = DirectionParser.parseDirection(line);
             if (requiredDirection == Direction.SELF || requiredDirection == direction) {

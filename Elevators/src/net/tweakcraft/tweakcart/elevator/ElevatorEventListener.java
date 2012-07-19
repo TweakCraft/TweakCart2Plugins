@@ -22,6 +22,7 @@ import net.tweakcraft.tweakcart.api.event.TweakVehicleCollidesWithSignEvent;
 import net.tweakcraft.tweakcart.api.event.listeners.TweakSignEventListener;
 import net.tweakcraft.tweakcart.model.Direction;
 import net.tweakcraft.tweakcart.util.VehicleUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -38,7 +39,6 @@ public class ElevatorEventListener extends TweakSignEventListener {
         Sign sign = event.getSign();
         Direction heading = event.getDirection();
         ElevatorParser.ElevateDirection ev = ElevatorParser.parseSign(sign);
-        System.out.println(ev);
         Location newLocation = null;
         switch (ev) {
             case UP:
@@ -59,7 +59,7 @@ public class ElevatorEventListener extends TweakSignEventListener {
         Block signBlock = s.getBlock();
         int height = s.getY();
 
-        int maxIt = Math.min(isUp ? 129 - height : height, MAX_HEIGHT);
+        int maxIt = Math.min(isUp ? (s.getWorld().getMaxHeight()+1) - height : height, MAX_HEIGHT);
         BlockFace direction = isUp ? BlockFace.UP : BlockFace.DOWN;
 
         for (int i = 0; i < maxIt; i++) {
