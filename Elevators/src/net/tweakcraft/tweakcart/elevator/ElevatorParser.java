@@ -29,7 +29,20 @@ public class ElevatorParser {
         DOWN
     }
 
-    public static ElevateDirection parseSign(Sign s) {
-        return s.getBlock().isBlockPowered() ? poweredDirection : unpoweredDirection;
-    }
+	public static ElevateDirection parseSign(Sign sign)
+	{
+		for (String line : sign.getLines()) 
+		{
+			line = line.toLowerCase();
+			if(line.equals("up"))
+			{
+				return ElevateDirection.UP;
+			}
+			else if(line.equals("down"))
+			{
+				return ElevateDirection.DOWN;
+			}
+		}
+		return sign.getBlock().isBlockPowered() ? poweredDirection : unpoweredDirection;
+	}
 }
