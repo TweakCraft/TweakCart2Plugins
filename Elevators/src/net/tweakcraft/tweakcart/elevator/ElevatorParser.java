@@ -42,6 +42,10 @@ public class ElevatorParser {
 			{
 				return ElevateDirection.DOWN;
 			}
+			else if(line.equals("invert"))
+			{
+				return sign.getBlock().isBlockPowered() ?  unpoweredDirection : poweredDirection;
+			}
 		}
 		return sign.getBlock().isBlockPowered() ? poweredDirection : unpoweredDirection;
 	}
