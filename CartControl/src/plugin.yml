@@ -1,0 +1,6 @@
+name: Debug
+main: net.tweakcraft.tweakcart.cartcontrol.CartControl
+authors: [windwarrior, Edoxile]
+website: https://github.com/TweakCraft/TweakCart2Plugins
+version: 0.1
+depend: [TweakCart]
