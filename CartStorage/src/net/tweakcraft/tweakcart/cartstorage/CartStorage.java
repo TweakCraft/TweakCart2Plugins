@@ -19,19 +19,15 @@ package net.tweakcraft.tweakcart.cartstorage;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import net.tweakcraft.tweakcart.api.event.TweakVehiclePassesSignEvent;
 import net.tweakcraft.tweakcart.api.event.listeners.TweakSignEventListener;
 import net.tweakcraft.tweakcart.api.model.TweakCartEvent;
 import net.tweakcraft.tweakcart.api.model.TweakCartPlugin;
-import net.tweakcraft.tweakcart.cartstorage.test.TestCartStorage;
 import net.tweakcraft.tweakcart.model.IntMap;
 import net.tweakcraft.tweakcart.util.ChestUtil;
 import net.tweakcraft.tweakcart.util.InventoryManager;
 import net.tweakcraft.tweakcart.util.TweakPluginManager;
-import org.bukkit.Material;
 import org.bukkit.block.Chest;
-import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.StorageMinecart;
 import org.bukkit.inventory.Inventory;
 
@@ -46,11 +42,6 @@ public class CartStorage extends TweakCartPlugin {
 
     @Override
     public void registerEvents( TweakPluginManager pluginManager ) {
-        if (CartStorage.TEST) {
-            //System.out.println("Running");
-            TestCartStorage test = new TestCartStorage((CraftServer) getServer(), new CartStorageEventListener());
-            test.testAll();
-        }
         pluginManager.registerEvent(new CartStorageEventListener(), TweakCartEvent.Sign.VehiclePassesSignEvent, "collect items", "deposit items");
     }
 

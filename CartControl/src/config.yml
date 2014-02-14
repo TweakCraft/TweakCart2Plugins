@@ -1,0 +1,4 @@
+## YAML Template.
+speedcontrol:
+  max-multiplier: 5.0
+  max-blocks-controlled: 16
