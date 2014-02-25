@@ -27,7 +27,7 @@ import org.bukkit.util.Vector;
  */
 public class SpeedControl extends TweakSignEventListener {
     
-    private Map<Minecart, SpeedDirective> speedControlledCarts = new HashMap<>();
+    private Map<Minecart, SpeedDirective> speedControlledCarts = new HashMap<Minecart, SpeedDirective>();
     private Pattern speedControlPattern = Pattern.compile("(\\d+)%(@(\\d+))?");
     private final CartControl plugin;
 
@@ -50,7 +50,7 @@ public class SpeedControl extends TweakSignEventListener {
             if (sp != null) {
                 // If parsing did succeed, lets control the minecart
                 speedControlledCarts.put(event.getMinecart(), sp);
-                event.getMinecart().setVelocity(sp.getHeading());
+                event.getMinecart().setVelocity(event.getMinecart().getVelocity().normalize().multiply(sp.getSpeed()));
                 sp.decrBlocks();
             }
         }
@@ -59,14 +59,13 @@ public class SpeedControl extends TweakSignEventListener {
     @Override
     public void onVehicleBlockChange(TweakVehicleBlockChangeEvent event) {
         if (speedControlledCarts.containsKey(event.getMinecart())) {
-            SpeedDirective dir = speedControlledCarts.get(event.getMinecart());
+            SpeedDirective sp = speedControlledCarts.get(event.getMinecart());
+
+            event.getMinecart().setVelocity(event.getMinecart().getVelocity().normalize().multiply(sp.getSpeed()));
+            sp.decrBlocks();
             
-            event.getMinecart().setVelocity(dir.getHeading());
-            dir.decrBlocks();
-            
-            if (dir.getBlocks() == 0) {
+            if (sp.getBlocks() == 0) {
                 speedControlledCarts.remove(event.getMinecart());
-                Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "Releasing control!" + ChatColor.RESET);
             }
         }
     }
@@ -79,9 +78,9 @@ public class SpeedControl extends TweakSignEventListener {
                 double speedMod = Math.min(this.plugin.getConfig().getDouble("speedcontrol.max-multiplier"), ((double) Integer.parseInt(match.group(1))) / 100.0);
                 if (match.group(3) != null) {
                     int blocks = Math.min(this.plugin.getConfig().getInt("speedcontrol.max-blocks-controlled"), Integer.parseInt(match.group(3)));
-                    result = new SpeedDirective(velocity.multiply(speedMod), blocks);
+                    result = new SpeedDirective(velocity.multiply(speedMod).length(), blocks);
                 } else {
-                    result = new SpeedDirective(velocity.multiply(speedMod), 16);
+                    result = new SpeedDirective(velocity.multiply(speedMod).length(), 16);
                 }
             }
         }

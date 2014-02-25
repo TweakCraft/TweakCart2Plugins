@@ -1,4 +1,4 @@
-name: Debug
+name: CartControl
 main: net.tweakcraft.tweakcart.cartcontrol.CartControl
 authors: [windwarrior, Edoxile]
 website: https://github.com/TweakCraft/TweakCart2Plugins

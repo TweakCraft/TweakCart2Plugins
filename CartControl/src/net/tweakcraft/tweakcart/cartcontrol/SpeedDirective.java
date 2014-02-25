@@ -7,16 +7,16 @@ import org.bukkit.util.Vector;
  * Keeps track of wanted velocity and amount of blocks still remaining
  */
 public class SpeedDirective {
-    private final Vector heading;
+    private final double speed;
     private int blocks;
     
-    public SpeedDirective(final Vector heading, int blocks){
-        this.heading = heading;
+    public SpeedDirective(final double speed, int blocks){
+        this.speed = speed;
         this.blocks = blocks;
     }
     
-    public Vector getHeading(){
-        return this.heading;
+    public double getSpeed(){
+        return this.speed;
     }
     
     public int getBlocks(){

@@ -9,6 +9,7 @@ import net.tweakcraft.tweakcart.api.event.listeners.TweakSignEventListener;
 import net.tweakcraft.tweakcart.model.Direction;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -28,8 +29,8 @@ public class Ejector extends TweakSignEventListener {
 
     @Override
     public void onSignPass(TweakVehiclePassesSignEvent event) {
-        Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "event voor ejector!");
         Block minecartBlock = event.getMinecart().getLocation().getBlock();
+        Location l = event.getMinecart().getLocation();
 
         if (minecartBlock.getRelative(BlockFace.DOWN).getType() == Material.IRON_BLOCK
                 || minecartBlock.getRelative(BlockFace.DOWN).getRelative(BlockFace.DOWN).getType() == Material.IRON_BLOCK) {
@@ -38,7 +39,7 @@ public class Ejector extends TweakSignEventListener {
                 event.getMinecart().eject();
                                
                 Direction signDir = parseDirection(event.getSign());
-                passenger.teleport(minecartBlock.getLocation().add(signDir.getModX() * 10.0, signDir.getModY() * 10.0, signDir.getModZ() * 10));
+                passenger.teleport(minecartBlock.getLocation().add(signDir.getModX() + 0.5, signDir.getModY(), signDir.getModZ() + 0.5));
             }
 
         }
