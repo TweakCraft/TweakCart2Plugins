@@ -21,12 +21,6 @@ import org.bukkit.entity.Entity;
  * @author lennart
  */
 public class Ejector extends TweakSignEventListener {
-    private final CartControl plugin;
-
-    public Ejector(CartControl plugin) {
-        this.plugin = plugin;
-    }
-
     @Override
     public void onSignPass(TweakVehiclePassesSignEvent event) {
         Block minecartBlock = event.getMinecart().getLocation().getBlock();

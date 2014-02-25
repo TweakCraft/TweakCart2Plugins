@@ -27,8 +27,8 @@ import org.bukkit.util.Vector;
  */
 public class SpeedControl extends TweakSignEventListener {
     
-    private Map<Minecart, SpeedDirective> speedControlledCarts = new HashMap<Minecart, SpeedDirective>();
-    private Pattern speedControlPattern = Pattern.compile("(\\d+)%(@(\\d+))?");
+    private final Map<Minecart, SpeedDirective> speedControlledCarts = new HashMap<Minecart, SpeedDirective>();
+    private final Pattern speedControlPattern = Pattern.compile("(\\d+)%(@(\\d+))?");
     private final CartControl plugin;
 
     public SpeedControl(CartControl plugin) {

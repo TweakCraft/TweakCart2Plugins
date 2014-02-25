@@ -33,8 +33,11 @@ public class CartControl extends TweakCartPlugin{
         pluginManager.registerEvent(speedInstance, TweakCartEvent.Sign.VehiclePassesSignEvent, "speed control");
         pluginManager.registerEvent(speedInstance, TweakCartEvent.Block.VehicleBlockChangeEvent);
         
-        Ejector ejectorInstance = new Ejector(this);
+        Ejector ejectorInstance = new Ejector();
         pluginManager.registerEvent(ejectorInstance, TweakCartEvent.Sign.VehiclePassesSignEvent, "ejector");
+        
+        DeadStop deadStopInstance = new DeadStop();
+        pluginManager.registerEvent(deadStopInstance, TweakCartEvent.Sign.VehiclePassesSignEvent, "stop");
     }    
 
     @Override
