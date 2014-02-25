@@ -7,8 +7,6 @@ package net.tweakcraft.tweakcart.cartcontrol;
 import net.tweakcraft.tweakcart.api.event.TweakVehiclePassesSignEvent;
 import net.tweakcraft.tweakcart.api.event.listeners.TweakSignEventListener;
 import net.tweakcraft.tweakcart.model.Direction;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -28,7 +26,6 @@ public class Ejector extends TweakSignEventListener {
 
     @Override
     public void onSignPass(TweakVehiclePassesSignEvent event) {
-        Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "event voor ejector!");
         Block minecartBlock = event.getMinecart().getLocation().getBlock();
 
         if (minecartBlock.getRelative(BlockFace.DOWN).getType() == Material.IRON_BLOCK

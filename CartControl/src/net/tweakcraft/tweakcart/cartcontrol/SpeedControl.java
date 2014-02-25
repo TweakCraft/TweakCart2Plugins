@@ -11,14 +11,11 @@ import java.util.regex.Pattern;
 import net.tweakcraft.tweakcart.api.event.TweakVehicleBlockChangeEvent;
 import net.tweakcraft.tweakcart.api.event.TweakVehiclePassesSignEvent;
 import net.tweakcraft.tweakcart.api.event.listeners.TweakSignEventListener;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
-import org.bukkit.material.Attachable;
 import org.bukkit.util.Vector;
 
 /**
@@ -27,8 +24,8 @@ import org.bukkit.util.Vector;
  */
 public class SpeedControl extends TweakSignEventListener {
     
-    private Map<Minecart, SpeedDirective> speedControlledCarts = new HashMap<>();
-    private Pattern speedControlPattern = Pattern.compile("(\\d+)%(@(\\d+))?");
+    private final Map<Minecart, SpeedDirective> speedControlledCarts = new HashMap<>();
+    private final Pattern speedControlPattern = Pattern.compile("(\\d+)%(@(\\d+))?");
     private final CartControl plugin;
 
     public SpeedControl(CartControl plugin) {
@@ -66,7 +63,6 @@ public class SpeedControl extends TweakSignEventListener {
             
             if (dir.getBlocks() == 0) {
                 speedControlledCarts.remove(event.getMinecart());
-                Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "Releasing control!" + ChatColor.RESET);
             }
         }
     }

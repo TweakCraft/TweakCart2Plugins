@@ -7,7 +7,6 @@ package net.tweakcraft.tweakcart.cartcontrol;
 import net.tweakcraft.tweakcart.api.model.TweakCartEvent;
 import net.tweakcraft.tweakcart.api.model.TweakCartPlugin;
 import net.tweakcraft.tweakcart.util.TweakPluginManager;
-import org.bukkit.configuration.file.FileConfiguration;
 
 /**
  *
@@ -30,9 +29,9 @@ public class CartControl extends TweakCartPlugin{
          * *************** *
          * Will increment speed by 110% and hold that speed for 16 blocks
          */
-        SpeedControl instance = new SpeedControl(this);
-        pluginManager.registerEvent(instance, TweakCartEvent.Sign.VehiclePassesSignEvent, "speed control");
-        pluginManager.registerEvent(instance, TweakCartEvent.Block.VehicleBlockChangeEvent);
+        SpeedControl speedInstance = new SpeedControl(this);
+        pluginManager.registerEvent(speedInstance, TweakCartEvent.Sign.VehiclePassesSignEvent, "speed control");
+        pluginManager.registerEvent(speedInstance, TweakCartEvent.Block.VehicleBlockChangeEvent);
         
         Ejector ejectorInstance = new Ejector(this);
         pluginManager.registerEvent(ejectorInstance, TweakCartEvent.Sign.VehiclePassesSignEvent, "ejector");
@@ -42,7 +41,5 @@ public class CartControl extends TweakCartPlugin{
     public void onEnable() {
         super.onEnable();
         this.saveDefaultConfig();
-    }
-    
-    
+    }    
 }
