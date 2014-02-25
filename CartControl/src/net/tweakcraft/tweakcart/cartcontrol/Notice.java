@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
  *
  * @author lennart
  */
-public class Announce extends TweakSignEventListener{
+public class Notice extends TweakSignEventListener{
     
     @Override
     public void onSignPass(TweakVehiclePassesSignEvent event) {

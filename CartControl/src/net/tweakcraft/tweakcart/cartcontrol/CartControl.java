@@ -38,6 +38,9 @@ public class CartControl extends TweakCartPlugin{
         
         DeadStop deadStopInstance = new DeadStop();
         pluginManager.registerEvent(deadStopInstance, TweakCartEvent.Sign.VehiclePassesSignEvent, "stop");
+        
+        Notice noticeInstance = new Notice();
+        pluginManager.registerEvent(noticeInstance, TweakCartEvent.Sign.VehiclePassesSignEvent, "notice");
     }    
 
     @Override
