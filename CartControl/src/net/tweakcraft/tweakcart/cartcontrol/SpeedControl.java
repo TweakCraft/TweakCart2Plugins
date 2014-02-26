@@ -49,6 +49,12 @@ public class SpeedControl extends TweakSignEventListener {
             
             if (sp != null) {
                 // If parsing did succeed, lets control the minecart
+                
+                // first clear other directives
+                if(speedControlledCarts.containsKey(event.getMinecart())){
+                    speedControlledCarts.remove(event.getMinecart());
+                    Bukkit.getServer().broadcastMessage("Er was een gecontroleerde cart, die is nu niet meer");
+                }
                 speedControlledCarts.put(event.getMinecart(), sp);
                 event.getMinecart().setVelocity(event.getMinecart().getVelocity().normalize().multiply(sp.getSpeed()));
                 sp.decrBlocks();
