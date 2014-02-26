@@ -18,10 +18,12 @@
 
 package net.tweakcraft.tweakcart.intersection;
 
+import net.tweakcraft.tweakcart.api.model.TweakCartEvent;
 import net.tweakcraft.tweakcart.api.model.TweakCartPlugin;
 import net.tweakcraft.tweakcart.util.TweakPluginManager;
 
 public class Intersection extends TweakCartPlugin {
+    private IntersectionEventListener eventListener = new IntersectionEventListener();
 
     @Override
     public String getPluginName() {
@@ -30,6 +32,6 @@ public class Intersection extends TweakCartPlugin {
 
     @Override
     public void registerEvents(TweakPluginManager pluginManager) {
-        //TODO: register events
+        pluginManager.registerEvent(eventListener, TweakCartEvent.Sign.VehicleCollidesWithSignEvent, "intersection");
     }
 }

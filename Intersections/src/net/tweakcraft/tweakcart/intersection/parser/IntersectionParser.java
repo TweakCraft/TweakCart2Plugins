@@ -18,7 +18,6 @@
 
 package net.tweakcraft.tweakcart.intersection.parser;
 
-import net.tweakcraft.tweakcart.api.model.parser.DirectionParser;
 import net.tweakcraft.tweakcart.model.Direction;
 import net.tweakcraft.tweakcart.util.InventoryManager;
 import org.bukkit.entity.Minecart;
@@ -32,98 +31,75 @@ import org.bukkit.entity.StorageMinecart;
  */
 public class IntersectionParser {
     public static Direction parseIntersection(String line, Minecart cart, Direction cartDirection) {
-        //Returns the direction to go to. null = parse error, BlockFace.SELF is incompatible direction.
-        //First check the remainder direction
-        Direction remainderDirection = Direction.SELF;
-        if (line.length() > 2 && line.charAt(line.length() - 2) == IntersectionCharacter.REMAINDER_DELIMITER.getCharacter()) {
-            remainderDirection = IntersectionCharacter.parseDirection(line.charAt(line.length() - 1));
-            line = line.substring(0, line.length() - 2);
-        }
-
-        line += "" + IntersectionCharacter.STATEMENT_DELIMITER;
-        Direction direction = DirectionParser.parseDirection(line);
-
-        if (direction == null) {
-            return null;
-        } else if (direction != cartDirection) {
-            return Direction.SELF;
-        } else {
-            line = DirectionParser.removeDirection(line);
-            boolean containsCartType = false;
-            Boolean cartMustBeEmpty = null;
-            //So, now that we know that the cart is going in the correct direction, recycle the direction object.
-            //It'll return the direction the cart has to go to
-            for (char character : line.toCharArray()) {
-                IntersectionCharacter intersectionCharacter = IntersectionCharacter.getIntersectionCharacter(character);
-                switch (intersectionCharacter) {
-                    case MINECART:
-                        containsCartType = containsCartType || (!(cart instanceof PoweredMinecart) && !(cart instanceof StorageMinecart));
-                        break;
-                    case POWERED_CART:
-                        containsCartType = containsCartType || (cart instanceof PoweredMinecart);
-                        break;
-                    case STORAGE_CART:
-                        containsCartType = containsCartType || (cart instanceof StorageMinecart);
-                        break;
-                    case ANY_CART:
-                        containsCartType = true;
-                        break;
-                    case EMPTY_CART:
-                        cartMustBeEmpty = true;
-                        break;
-                    case FULL_CART:
-                        cartMustBeEmpty = false;
-                        break;
-                    case STATEMENT_DELIMITER:
-                        if (!containsCartType) {
-                            cartMustBeEmpty = null;
-                            break;
-                        }
-                        if (cartMustBeEmpty == null) {
-                            return direction;
-                        } else if (cartMustBeEmpty) {
-                            if (cart instanceof StorageMinecart && !InventoryManager.isEmpty(((StorageMinecart) cart).getInventory().getContents())) {
-                                cartMustBeEmpty = null;
-                                containsCartType = false;
-                            } else if (!(cart instanceof PoweredMinecart) && !(cart instanceof StorageMinecart) && cart.getPassenger() != null) {
-                                cartMustBeEmpty = null;
-                                containsCartType = false;
-                            } else {
-                                return direction;
-                            }
-                        } else {
-                            if (cart instanceof StorageMinecart && InventoryManager.isEmpty(((StorageMinecart) cart).getInventory().getContents())) {
-                                cartMustBeEmpty = null;
-                                containsCartType = false;
-                            } else if (cart.getPassenger() == null) {
-                                cartMustBeEmpty = null;
-                                containsCartType = false;
-                            } else {
-                                return direction;
-                            }
-                        }
-                        break;
-                    case DIRECTION_DELIMITER:
-                        break;
-                    case DIRECTION:
-                        direction = IntersectionCharacter.parseDirection(character);
-                        if (direction == null) {
-                            return null;
-                        } else {
-                            break;
-                        }
-                    default:
-                        return null;
-                }
+        char[] chars = line.toLowerCase().toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            boolean originFound = false;
+            do {
+                originFound = originFound || IntersectionCharacter.parseDirection(chars[i]) == cartDirection;
             }
-            return direction;
+            while (++i < chars.length && IntersectionCharacter.getIntersectionCharacter(chars[i]) != IntersectionCharacter.LEFT_DIRECTION_DELIMITER);
+            if (++i < chars.length && originFound) {
+                boolean containsCartType = false;
+                do {
+                    IntersectionCharacter type = IntersectionCharacter.getIntersectionCharacter(chars[i]);
+                    IntersectionCharacter state = IntersectionCharacter.ANY_LOAD;
+                    if (type != IntersectionCharacter.ANY_CART && type != IntersectionCharacter.MINECART
+                            && type != IntersectionCharacter.STORAGE_CART && type != IntersectionCharacter.POWERED_CART) {
+                        return null;
+                    }
+                    if ((i + 1) < chars.length && IntersectionCharacter.getIntersectionCharacter(chars[i + 1]) != IntersectionCharacter.CART_DELIMITER
+                            && IntersectionCharacter.getIntersectionCharacter(chars[i + 1]) != IntersectionCharacter.RIGHT_DIRECTION_DELIMITER) {
+                        state = IntersectionCharacter.getIntersectionCharacter(chars[++i]);
+                    }
+                    if (checkCartType(cart, type)) {
+                        containsCartType = containsCartType || state == null || checkCartState(cart, state);
+                    }
+                }
+                while (++i < chars.length && IntersectionCharacter.getIntersectionCharacter(chars[i]) != IntersectionCharacter.RIGHT_DIRECTION_DELIMITER);
+                if (++i < chars.length && containsCartType) {
+                    return IntersectionCharacter.parseDirection(chars[i]);
+                }
+                if (i + 1 < chars.length && IntersectionCharacter.getIntersectionCharacter(chars[i]) == IntersectionCharacter.REMAINDER_DELIMITER) {
+                    return IntersectionCharacter.parseDirection(chars[++i]);
+                }
+                if (!(i + 1 < chars.length && IntersectionCharacter.getIntersectionCharacter(chars[++i]) == IntersectionCharacter.STATEMENT_DELIMITER)) {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    public static boolean checkCartType(Minecart cart, IntersectionCharacter type) {
+        switch (type) {
+            case ANY_CART:
+                return true;
+            case MINECART:
+                return !(cart instanceof StorageMinecart || cart instanceof PoweredMinecart);
+            case POWERED_CART:
+                return cart instanceof PoweredMinecart;
+            case STORAGE_CART:
+                return cart instanceof StorageMinecart;
+            default:
+                return false;
         }
     }
 
-    //1 = correct direction, 0 = wrong direction, -1 is no direction found
-    @Deprecated
-    public static int parseDirection(String line, Direction cartDirection) {
-        Direction direction = DirectionParser.parseDirection(line);
-        return (direction == null) ? ((direction == cartDirection) ? 1 : 0) : -1;
+    public static boolean checkCartState(Minecart cart, IntersectionCharacter state) {
+        if (state == IntersectionCharacter.ANY_LOAD) {
+            return true;
+        } else {
+            if (cart instanceof PoweredMinecart) {
+                return true;
+            } else if (cart instanceof StorageMinecart) {
+                boolean s = (state == IntersectionCharacter.EMPTY_CART);
+                StorageMinecart storageMinecart = (StorageMinecart) cart;
+                return InventoryManager.isEmpty(storageMinecart.getInventory().getContents()) == s;
+            } else {
+                return cart.getPassenger() != null;
+            }
+        }
     }
 }

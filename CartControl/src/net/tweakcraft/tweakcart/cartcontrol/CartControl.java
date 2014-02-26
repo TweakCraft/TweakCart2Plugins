@@ -36,11 +36,14 @@ public class CartControl extends TweakCartPlugin{
         Ejector ejectorInstance = new Ejector();
         pluginManager.registerEvent(ejectorInstance, TweakCartEvent.Sign.VehiclePassesSignEvent, "ejector");
         
-        DeadStop deadStopInstance = new DeadStop();
-        pluginManager.registerEvent(deadStopInstance, TweakCartEvent.Sign.VehiclePassesSignEvent, "stop");
-        
+        Buffer deadStopInstance = new Buffer();
+        pluginManager.registerEvent(deadStopInstance, TweakCartEvent.Sign.VehiclePassesSignEvent, "wait", "buffer");
+        pluginManager.registerEvent(deadStopInstance, TweakCartEvent.Sign.RedstoneEvent, "wait", "buffer");
+
         Notice noticeInstance = new Notice();
         pluginManager.registerEvent(noticeInstance, TweakCartEvent.Sign.VehiclePassesSignEvent, "notice");
+
+
     }    
 
     @Override

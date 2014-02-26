@@ -26,17 +26,23 @@ import net.tweakcraft.tweakcart.model.Direction;
  * @author Edoxile
  */
 public enum IntersectionCharacter {
-    FULL_CART('#'),
+    FULL_CART('f'),
     EMPTY_CART('&'),
+    ANY_LOAD('@'),
 
     MINECART('m'),
     STORAGE_CART('c'),
     POWERED_CART('p'),
     ANY_CART('a'),
 
-    DIRECTION(' '),
+    DIRECTION_NORTH('n'),
+    DIRECTION_SOUTH('s'),
+    DIRECTION_EAST('e'),
+    DIRECTION_WEST('w'),
 
-    DIRECTION_DELIMITER(';'),
+    LEFT_DIRECTION_DELIMITER('['),
+    RIGHT_DIRECTION_DELIMITER(']'),
+    CART_DELIMITER(';'),
     STATEMENT_DELIMITER(':'),
     REMAINDER_DELIMITER('!');
 
@@ -47,6 +53,8 @@ public enum IntersectionCharacter {
                 return FULL_CART;
             case '&':
                 return EMPTY_CART;
+            case '@':
+                return ANY_LOAD;
             case 'm':
                 return MINECART;
             case 'c':
@@ -55,20 +63,24 @@ public enum IntersectionCharacter {
                 return POWERED_CART;
             case 'a':
                 return ANY_CART;
+            case '[':
+                return LEFT_DIRECTION_DELIMITER;
+            case ']':
+                return RIGHT_DIRECTION_DELIMITER;
             case ';':
-                return DIRECTION_DELIMITER;
+                return CART_DELIMITER;
             case ':':
                 return STATEMENT_DELIMITER;
             case '!':
                 return REMAINDER_DELIMITER;
             case 'n':
-                return DIRECTION;
+                return DIRECTION_NORTH;
             case 's':
-                return DIRECTION;
+                return DIRECTION_SOUTH;
             case 'e':
-                return DIRECTION;
+                return DIRECTION_EAST;
             case 'w':
-                return DIRECTION;
+                return DIRECTION_WEST;
             default:
                 return null;
         }
@@ -93,6 +105,21 @@ public enum IntersectionCharacter {
             case 'e':
                 return Direction.EAST;
             case 'w':
+                return Direction.WEST;
+            default:
+                return null;
+        }
+    }
+
+    public static Direction parseDirection(IntersectionCharacter character){
+        switch(character){
+            case DIRECTION_NORTH:
+                return Direction.NORTH;
+            case DIRECTION_SOUTH:
+                return Direction.SOUTH;
+            case DIRECTION_EAST:
+                return Direction.EAST;
+            case DIRECTION_WEST:
                 return Direction.WEST;
             default:
                 return null;
