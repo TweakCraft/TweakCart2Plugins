@@ -39,6 +39,7 @@ public enum IntersectionCharacter {
     DIRECTION_SOUTH('s'),
     DIRECTION_EAST('e'),
     DIRECTION_WEST('w'),
+    ANY_DIRECTION('*'),
 
     LEFT_DIRECTION_DELIMITER('['),
     RIGHT_DIRECTION_DELIMITER(']'),
@@ -81,6 +82,8 @@ public enum IntersectionCharacter {
                 return DIRECTION_EAST;
             case 'w':
                 return DIRECTION_WEST;
+            case '*':
+                return ANY_DIRECTION;
             default:
                 return null;
         }

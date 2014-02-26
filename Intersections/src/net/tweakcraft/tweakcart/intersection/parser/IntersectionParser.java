@@ -20,6 +20,7 @@ package net.tweakcraft.tweakcart.intersection.parser;
 
 import net.tweakcraft.tweakcart.model.Direction;
 import net.tweakcraft.tweakcart.util.InventoryManager;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.PoweredMinecart;
 import org.bukkit.entity.StorageMinecart;
@@ -32,12 +33,14 @@ import org.bukkit.entity.StorageMinecart;
 public class IntersectionParser {
     public static Direction parseIntersection(String line, Minecart cart, Direction cartDirection) {
         char[] chars = line.toLowerCase().toCharArray();
+        boolean originFound = false;
         for (int i = 0; i < chars.length; i++) {
-            boolean originFound = false;
-            do {
-                originFound = originFound || IntersectionCharacter.parseDirection(chars[i]) == cartDirection;
+            if (!originFound) {
+                do {
+                    originFound = originFound || checkCartDirection(cartDirection, chars[i]);
+                }
+                while (++i < chars.length && IntersectionCharacter.getIntersectionCharacter(chars[i]) != IntersectionCharacter.LEFT_DIRECTION_DELIMITER);
             }
-            while (++i < chars.length && IntersectionCharacter.getIntersectionCharacter(chars[i]) != IntersectionCharacter.LEFT_DIRECTION_DELIMITER);
             if (++i < chars.length && originFound) {
                 boolean containsCartType = false;
                 do {
@@ -59,17 +62,21 @@ public class IntersectionParser {
                 if (++i < chars.length && containsCartType) {
                     return IntersectionCharacter.parseDirection(chars[i]);
                 }
-                if (i + 1 < chars.length && IntersectionCharacter.getIntersectionCharacter(chars[i]) == IntersectionCharacter.REMAINDER_DELIMITER) {
+                if (++i + 1 < chars.length && IntersectionCharacter.getIntersectionCharacter(chars[i]) == IntersectionCharacter.REMAINDER_DELIMITER) {
                     return IntersectionCharacter.parseDirection(chars[++i]);
                 }
-                if (!(i + 1 < chars.length && IntersectionCharacter.getIntersectionCharacter(chars[++i]) == IntersectionCharacter.STATEMENT_DELIMITER)) {
-                    return null;
+                if (i + 1 < chars.length && IntersectionCharacter.getIntersectionCharacter(chars[i]) == IntersectionCharacter.STATEMENT_DELIMITER) {
+                    continue;
                 }
             } else {
                 return null;
             }
         }
         return null;
+    }
+
+    public static boolean checkCartDirection(Direction cartDirection, char character){
+        return character == IntersectionCharacter.ANY_DIRECTION.getCharacter() || cartDirection == IntersectionCharacter.parseDirection(character);
     }
 
     public static boolean checkCartType(Minecart cart, IntersectionCharacter type) {
@@ -91,14 +98,14 @@ public class IntersectionParser {
         if (state == IntersectionCharacter.ANY_LOAD) {
             return true;
         } else {
+            boolean s = (state == IntersectionCharacter.EMPTY_CART);
             if (cart instanceof PoweredMinecart) {
                 return true;
             } else if (cart instanceof StorageMinecart) {
-                boolean s = (state == IntersectionCharacter.EMPTY_CART);
                 StorageMinecart storageMinecart = (StorageMinecart) cart;
                 return InventoryManager.isEmpty(storageMinecart.getInventory().getContents()) == s;
             } else {
-                return cart.getPassenger() != null;
+                return (cart.getPassenger() == null) == s;
             }
         }
     }
