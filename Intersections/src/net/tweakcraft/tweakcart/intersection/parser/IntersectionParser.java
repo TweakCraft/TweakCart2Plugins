@@ -22,8 +22,8 @@ import net.tweakcraft.tweakcart.model.Direction;
 import net.tweakcraft.tweakcart.util.InventoryManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Minecart;
-import org.bukkit.entity.PoweredMinecart;
-import org.bukkit.entity.StorageMinecart;
+import org.bukkit.entity.minecart.PoweredMinecart;
+import org.bukkit.entity.minecart.StorageMinecart;
 
 /**
  * Created by IntelliJ IDEA.
