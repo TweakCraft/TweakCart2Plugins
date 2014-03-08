@@ -49,8 +49,7 @@ public class ElevatorEventListener extends TweakSignEventListener {
                 break;
         }
         if (newLocation != null) {
-            //Move the cart a bit (in the direction it's going) so it won't get stuck in a sign
-            VehicleUtil.moveCart(mine, newLocation.add((double) heading.getModX() * 1.5, (double) heading.getModY() * 1.5, (double) heading.getModZ() * 1.5));
+            VehicleUtil.moveCart(mine, newLocation);
         }
     }
 
@@ -64,7 +63,7 @@ public class ElevatorEventListener extends TweakSignEventListener {
         for (int i = 0; i < maxIt; i++) {
             signBlock = signBlock.getRelative(direction);
             if (signBlock.getState() instanceof Sign && BlockUtil.isRailBlock(signBlock.getRelative(heading.getModX(), heading.getModY(), heading.getModZ()))) {
-                return signBlock.getLocation();
+                return signBlock.getLocation().add(heading.getModX() * 1.5, 0, heading.getModZ() * 1.5);
             }
         }
         return null;
