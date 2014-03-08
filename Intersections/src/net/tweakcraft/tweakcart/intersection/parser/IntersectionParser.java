@@ -20,10 +20,8 @@ package net.tweakcraft.tweakcart.intersection.parser;
 
 import net.tweakcraft.tweakcart.model.Direction;
 import net.tweakcraft.tweakcart.util.InventoryManager;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Minecart;
-import org.bukkit.entity.PoweredMinecart;
-import org.bukkit.entity.StorageMinecart;
+import org.bukkit.entity.minecart.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -65,8 +63,8 @@ public class IntersectionParser {
                 if (++i + 1 < chars.length && IntersectionCharacter.getIntersectionCharacter(chars[i]) == IntersectionCharacter.REMAINDER_DELIMITER) {
                     return IntersectionCharacter.parseDirection(chars[++i]);
                 }
-                if (i + 1 < chars.length && IntersectionCharacter.getIntersectionCharacter(chars[i]) == IntersectionCharacter.STATEMENT_DELIMITER) {
-                    continue;
+                if (i + 1 >= chars.length || IntersectionCharacter.getIntersectionCharacter(chars[i]) != IntersectionCharacter.STATEMENT_DELIMITER) {
+                    return null;
                 }
             } else {
                 return null;
@@ -84,11 +82,17 @@ public class IntersectionParser {
             case ANY_CART:
                 return true;
             case MINECART:
-                return !(cart instanceof StorageMinecart || cart instanceof PoweredMinecart);
+                return cart instanceof RideableMinecart;
             case POWERED_CART:
                 return cart instanceof PoweredMinecart;
             case STORAGE_CART:
                 return cart instanceof StorageMinecart;
+            case HOPPER_MINECART:
+                return cart instanceof HopperMinecart;
+            case EXPLOSIVE_MINECART:
+                return cart instanceof ExplosiveMinecart;
+            case COMMAND_MINECART:
+                return cart instanceof CommandMinecart;
             default:
                 return false;
         }
@@ -104,8 +108,18 @@ public class IntersectionParser {
             } else if (cart instanceof StorageMinecart) {
                 StorageMinecart storageMinecart = (StorageMinecart) cart;
                 return InventoryManager.isEmpty(storageMinecart.getInventory().getContents()) == s;
+            } else if (cart instanceof HopperMinecart) {
+                HopperMinecart hopperMinecart = (HopperMinecart) cart;
+                return InventoryManager.isEmpty(hopperMinecart.getInventory().getContents()) == s;
+            } else if (cart instanceof ExplosiveMinecart){
+                return !s;
+            } else if (cart instanceof CommandMinecart){
+                CommandMinecart commandMinecart = (CommandMinecart) cart;
+                return (commandMinecart.getCommand().equals("")) == s;
+            } else if (cart instanceof RideableMinecart) {
+                return cart.isEmpty() == s;
             } else {
-                return (cart.getPassenger() == null) == s;
+                return false;
             }
         }
     }

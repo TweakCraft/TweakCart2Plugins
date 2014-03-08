@@ -21,9 +21,8 @@ package net.tweakcraft.tweakcart.elevator;
 import net.tweakcraft.tweakcart.api.event.TweakVehicleCollidesWithSignEvent;
 import net.tweakcraft.tweakcart.api.event.listeners.TweakSignEventListener;
 import net.tweakcraft.tweakcart.model.Direction;
+import net.tweakcraft.tweakcart.util.BlockUtil;
 import net.tweakcraft.tweakcart.util.VehicleUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -64,7 +63,7 @@ public class ElevatorEventListener extends TweakSignEventListener {
 
         for (int i = 0; i < maxIt; i++) {
             signBlock = signBlock.getRelative(direction);
-            if (signBlock.getState() instanceof Sign && VehicleUtil.isRail(signBlock.getRelative(heading.getModX(), heading.getModY(), heading.getModZ()))) {
+            if (signBlock.getState() instanceof Sign && BlockUtil.isRailBlock(signBlock.getRelative(heading.getModX(), heading.getModY(), heading.getModZ()))) {
                 return signBlock.getLocation();
             }
         }

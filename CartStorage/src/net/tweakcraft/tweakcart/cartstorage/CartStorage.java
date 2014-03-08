@@ -28,7 +28,7 @@ import net.tweakcraft.tweakcart.util.ChestUtil;
 import net.tweakcraft.tweakcart.util.InventoryManager;
 import net.tweakcraft.tweakcart.util.TweakPluginManager;
 import org.bukkit.block.Chest;
-import org.bukkit.entity.StorageMinecart;
+import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.inventory.Inventory;
 
 public class CartStorage extends TweakCartPlugin {

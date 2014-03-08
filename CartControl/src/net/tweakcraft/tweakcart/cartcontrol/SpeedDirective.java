@@ -1,7 +1,5 @@
 package net.tweakcraft.tweakcart.cartcontrol;
 
-import org.bukkit.util.Vector;
-
 /**
  * Directive for a minecart that is under speedcontrol
  * Keeps track of wanted velocity and amount of blocks still remaining

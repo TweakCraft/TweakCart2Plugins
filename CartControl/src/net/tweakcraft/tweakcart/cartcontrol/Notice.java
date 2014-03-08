@@ -25,8 +25,7 @@ public class Notice extends TweakSignEventListener{
         }
         
         if(event.getMinecart().getPassenger() instanceof Player){
-            Player p = (Player) event.getMinecart().getPassenger();
-            p.sendMessage(result);
+            ((Player) event.getMinecart().getPassenger()).sendMessage(result);
         }
     }
 }

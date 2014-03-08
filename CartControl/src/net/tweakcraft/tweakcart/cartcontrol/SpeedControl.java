@@ -9,16 +9,14 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.tweakcraft.tweakcart.api.event.TweakVehicleBlockChangeEvent;
+import net.tweakcraft.tweakcart.api.event.TweakVehicleDestroyEvent;
 import net.tweakcraft.tweakcart.api.event.TweakVehiclePassesSignEvent;
 import net.tweakcraft.tweakcart.api.event.listeners.TweakSignEventListener;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
-import org.bukkit.material.Attachable;
 import org.bukkit.util.Vector;
 
 /**
@@ -63,15 +61,20 @@ public class SpeedControl extends TweakSignEventListener {
     
     @Override
     public void onVehicleBlockChange(TweakVehicleBlockChangeEvent event) {
-        if (speedControlledCarts.containsKey(event.getMinecart())) {
-            SpeedDirective sp = speedControlledCarts.get(event.getMinecart());
-
+        SpeedDirective sp;
+        if ((sp = speedControlledCarts.get(event.getMinecart())) != null) {
             event.getMinecart().setVelocity(event.getMinecart().getVelocity().normalize().multiply(sp.getSpeed()));
             sp.decrBlocks();
-            
             if (sp.getBlocks() == 0) {
                 speedControlledCarts.remove(event.getMinecart());
             }
+        }
+    }
+
+    @Override
+    public void onVehicleDestroy(TweakVehicleDestroyEvent event){
+        if(speedControlledCarts.containsKey(event.getMinecart())){
+            speedControlledCarts.remove(event.getMinecart());
         }
     }
     

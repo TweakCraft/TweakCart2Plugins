@@ -33,6 +33,9 @@ public enum IntersectionCharacter {
     MINECART('m'),
     STORAGE_CART('c'),
     POWERED_CART('p'),
+    HOPPER_MINECART('h'),
+    EXPLOSIVE_MINECART('t'),
+    COMMAND_MINECART('o'),
     ANY_CART('a'),
 
     DIRECTION_NORTH('n'),
@@ -62,6 +65,12 @@ public enum IntersectionCharacter {
                 return STORAGE_CART;
             case 'p':
                 return POWERED_CART;
+            case 'h':
+                return HOPPER_MINECART;
+            case 't':
+                return EXPLOSIVE_MINECART;
+            case 'o':
+                return COMMAND_MINECART;
             case 'a':
                 return ANY_CART;
             case '[':
