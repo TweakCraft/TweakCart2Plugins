@@ -30,6 +30,7 @@ import net.tweakcraft.tweakcart.util.TweakPluginManager;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 
 public class CartStorage extends TweakCartPlugin {
     public static boolean TEST = false;
@@ -51,9 +52,9 @@ public class CartStorage extends TweakCartPlugin {
             if (event.getSign().getBlock().isBlockPowered() || event.getSign().getBlock().isBlockIndirectlyPowered()) {
                 return;
             }
-            if (event.getMinecart() instanceof StorageMinecart) {
-                StorageMinecart storageMinecart = (StorageMinecart) event.getMinecart();
-                Inventory cartInventory = storageMinecart.getInventory();
+            if (event.getMinecart() instanceof InventoryHolder) {
+                InventoryHolder inventoryHolder = (InventoryHolder) event.getMinecart();
+                Inventory cartInventory = inventoryHolder.getInventory();
                 //try
                 //{
                 IntMap[] maps = net.tweakcraft.tweakcart.cartstorage.parser.ItemParser.parseSign(event.getSign(), event.getDirection());
