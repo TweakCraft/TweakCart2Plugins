@@ -1,0 +1,6 @@
+name: CartRouting
+main: net.tweakcraft.tweakcart.cartrouting.CartRouting
+authors: [nislim]
+website: https://github.com/nislim/TweakCart2Plugins
+version: 0.1
+depend: [TweakCart]
