@@ -5,6 +5,7 @@ import net.tweakcraft.tweakcart.api.event.listeners.TweakSignEventListener;
 import net.tweakcraft.tweakcart.cartrouting.model.ActionType;
 import net.tweakcraft.tweakcart.util.BlockUtil;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.material.DetectorRail;
 import org.bukkit.material.Lever;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -35,6 +36,10 @@ public class CartRoutingEventListener extends TweakSignEventListener {
                         DetectorRailListener.getInstance().activate(event.getMinecart().getLocation().getBlock().getLocation());
                     }
                 }
+                break;
+            case READDEST:
+                if(event.getMinecart().hasMetadata("Destination") && event.getMinecart().getPassenger() instanceof Player)
+                    ((Player) event.getMinecart().getPassenger()).sendMessage("Your are travelling to: " + event.getMinecart().getMetadata("Destination").get(0).asString());
                 break;
         }
     }

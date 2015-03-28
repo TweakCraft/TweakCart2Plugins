@@ -19,7 +19,7 @@ public class CartRouting extends TweakCartPlugin {
     public void registerEvents(TweakPluginManager pluginManager) {
         pluginManager.registerEvent(DetectorRailListener.getInstance(), TweakCartEvent.Block.VehicleBlockRedstoneEvent);
 
-        pluginManager.registerEvent(new CartRoutingEventListener(this), TweakCartEvent.Sign.VehiclePassesSignEvent, "set destination", "get destination");
+        pluginManager.registerEvent(new CartRoutingEventListener(this), TweakCartEvent.Sign.VehiclePassesSignEvent, "set destination", "get destination", "read destination");
     }
 
 }

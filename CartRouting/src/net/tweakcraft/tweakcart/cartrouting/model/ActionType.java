@@ -5,7 +5,8 @@ package net.tweakcraft.tweakcart.cartrouting.model;
  */
 public enum ActionType {
     SETDEST("set destination"),
-    GETDEST("get destination");
+    GETDEST("get destination"),
+    READDEST("read destination");
 
     private String text;
 
