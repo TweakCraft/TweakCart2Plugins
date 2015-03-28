@@ -38,9 +38,15 @@ public class CartRoutingEventListener extends TweakSignEventListener {
                 }
                 break;
             case READDEST:
-                if(event.getMinecart().hasMetadata("Destination") && event.getMinecart().getPassenger() instanceof Player)
-                    ((Player) event.getMinecart().getPassenger()).sendMessage("Your are travelling to: " + event.getMinecart().getMetadata("Destination").get(0).asString());
+                if(event.getMinecart().getPassenger() instanceof Player)
+                    if(event.getMinecart().hasMetadata("Destination"))
+                        ((Player) event.getMinecart().getPassenger()).sendMessage("Your are travelling to: " + event.getMinecart().getMetadata("Destination").get(0).asString());
+                    else
+                        ((Player) event.getMinecart().getPassenger()).sendMessage("You have no active destination");
                 break;
+            case CLEARDEST:
+                if(event.getMinecart().hasMetadata("Destination"))
+                    event.getMinecart().removeMetadata("Destination", plugin);
         }
     }
 }
