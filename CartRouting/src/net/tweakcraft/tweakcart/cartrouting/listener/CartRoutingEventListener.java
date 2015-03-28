@@ -34,9 +34,6 @@ public class CartRoutingEventListener extends TweakSignEventListener {
                     if (event.getMinecart().getMetadata("Destination").get(0).asString().equalsIgnoreCase(event.getSign().getLine(1))) {
                         DetectorRailListener.getInstance().activate(event.getMinecart().getLocation().getBlock().getLocation());
                     }
-                } else {
-                    if(event.getMinecart().getLocation().getBlock().getType() == Material.DETECTOR_RAIL)
-                        DetectorRailListener.getInstance().activate(event.getMinecart().getLocation().getBlock().getLocation());
                 }
                 break;
         }

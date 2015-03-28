@@ -52,18 +52,4 @@ public class DetectorRailListener extends TweakBlockEventListener implements Lis
             event.setNewCurrent(0);
         }
     }
-
-    @Override
-    public void onVehicleBlockChange(TweakVehicleBlockChangeEvent event) {
-        Sign sign = HelperClass.findSign(event.getBlock());
-
-        if (sign != null && ActionType.getActionType(sign.getLine(0)) == ActionType.GETDEST && event.getMinecart().hasMetadata("Destination") && event.getBlock().getType() == Material.DETECTOR_RAIL) {
-            if (event.getMinecart().getMetadata("Destination").get(0).asString().equalsIgnoreCase(sign.getLine(1))) {
-                activated.add(event.getBlock().getLocation());
-            }
-        } else {
-            if(event.getBlock().getType() == Material.DETECTOR_RAIL)
-                activated.add(event.getBlock().getLocation());
-        }
-    }
 }
