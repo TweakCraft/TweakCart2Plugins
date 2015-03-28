@@ -48,7 +48,9 @@ public class DetectorRailListener extends TweakBlockEventListener implements Lis
         if(event.getNewCurrent() == 0)
             activated.remove(event.getBlock().getLocation());
 
-        if(event.getBlock().getType() == Material.DETECTOR_RAIL && !activated.contains(event.getBlock().getLocation())) {
+        Sign sign = HelperClass.findSign(event.getBlock(), ActionType.GETDEST.getText());
+
+        if(event.getBlock().getType() == Material.DETECTOR_RAIL && !activated.contains(event.getBlock().getLocation()) && sign != null) {
             event.setNewCurrent(0);
         }
     }
